@@ -3,6 +3,7 @@
 
 %define major 0
 %define libname %mklibname amanda %{major}
+%define develname %mklibname amanda -d
 
 %define	_libexecdir %{_libdir}/amanda
 %define plevel %{nil}
@@ -10,7 +11,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	2.5.1
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
@@ -149,7 +150,7 @@ up Microsoft(TM) Windows95/NT hosts.  The amanda package contains the
 core AMANDA programs and will need to be installed on both AMANDA clients
 and AMANDA servers.  Note that you will have to install the amanda-client
 
-%package -n	%{libname}-devel
+%package -n	%{develname}
 Summary:	Libraries and documentation of the AMANDA tape backup system
 Group:		Development/Other
 Requires:	%{libname} = %{version}-%{release}
@@ -157,8 +158,9 @@ Requires:	%{libname}-server = %{version}-%{release}
 Requires:	%{libname}-client = %{version}-%{release}
 Provides:	amanda-devel = %{version}-%{release}
 Provides:	lib%{name}-devel = %{version}-%{release}
+Obsoletes:	%{mklibname amanda 0 -d}
 
-%description -n %{libname}-devel
+%description -n %{develname}
 The libamanda-devel package should be installed on any machine that will
 be used to develop amanda applications.
 
@@ -186,7 +188,9 @@ find -name "Makefile.*" | xargs perl -pi -e "s|^libamtape_la_LDFLAGS.*|libamtape
 find -name "Makefile.*" | xargs perl -pi -e "s|^librestore_la_LDFLAGS.*|librestore_la_LDFLAGS = -version-info %{amanda_version_info}|g"
 
 %build
-export CFLAGS="%{optflags} -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
+%serverbuild
+
+export CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
 export SED=sed
 export WANT_AUTOCONF_2_5=1
 rm -f configure
@@ -431,10 +435,8 @@ rm -rf %{buildroot}
 %{_libdir}/libamclient.so.*
 %{_libdir}/libamandad.so.*
 
-%files -n %{libname}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %{_libdir}/lib*.a
 %{_libdir}/lib*.la
 %{_libdir}/lib*.so
-
-
