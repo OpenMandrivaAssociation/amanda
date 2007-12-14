@@ -11,7 +11,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	2.5.1
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
