@@ -52,6 +52,7 @@ BuildRequires:	openssl-devel
 ExcludeArch:	ia64
 Requires:	tar >= 1.15
 Requires:	libtermcap
+BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 
 %description 
 AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
