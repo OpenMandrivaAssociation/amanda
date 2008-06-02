@@ -199,7 +199,7 @@ libtoolize --copy --force; aclocal-1.7; automake-1.7; autoconf
 %configure2_5x \
     --enable-shared \
     --with-index-server=localhost \
-    --with-gnutar-listdir=%{_localstatedir}/amanda/gnutar-lists \
+    --with-gnutar-listdir=%{_localstatedir}/lib/amanda/gnutar-lists \
     --with-smbclient=%{_bindir}/smbclient \
     --with-db=text \
     --with-amandahosts \
@@ -221,9 +221,9 @@ rm -rf %{buildroot}
 
 install -d %{buildroot}%{_sysconfdir}/xinetd.d
 install -d %{buildroot}%{_sysconfdir}/amanda/DailySet1
-install -d %{buildroot}%{_localstatedir}/amanda
-install -d %{buildroot}%{_localstatedir}/amanda/gnutar-lists
-install -d %{buildroot}%{_localstatedir}/amanda/DailySet1/index
+install -d %{buildroot}%{_localstatedir}/lib/amanda
+install -d %{buildroot}%{_localstatedir}/lib/amanda/gnutar-lists
+install -d %{buildroot}%{_localstatedir}/lib/amanda/DailySet1/index
 
 %makeinstall_std BINARY_OWNER=`id -un` SETUID_GROUP=`id -gn`
 
@@ -232,8 +232,8 @@ bzcat %{SOURCE6} > %{buildroot}%{_sysconfdir}/xinetd.d/amandaidx
 bzcat %{SOURCE7} > %{buildroot}%{_sysconfdir}/xinetd.d/amidxtape
 chmod 644 %{buildroot}%{_sysconfdir}/xinetd.d/*
 
-bzcat %{SOURCE8} > %{buildroot}%{_localstatedir}/amanda/.amandahosts
-chmod 660 %{buildroot}%{_localstatedir}/amanda/.amandahosts
+bzcat %{SOURCE8} > %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
+chmod 660 %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
 
 mkdir -p examples
 cp example/* examples
@@ -261,7 +261,7 @@ rm -rf %{buildroot}%{_datadir}/amanda
 perl -pi -e "s|/usr/lib|%{_libdir}|g" %{buildroot}%{_sysconfdir}/xinetd.d/*
 
 %pre -n %{libname}
-useradd -M -n -g disk -r -d %{_localstatedir}/amanda -s /bin/bash \
+useradd -M -n -g disk -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
 	-c "system user for %{name}" amanda >/dev/null 2>&1 || :
 
 %post client
@@ -297,8 +297,8 @@ rm -rf %{buildroot}
 %{_libdir}/libamtape.so.*
 %{_libdir}/librestore.so.*
 %attr(-,amanda,disk) %{_sbindir}/amrestore
-%attr(600,amanda,disk)  %config(noreplace) %{_localstatedir}/amanda/.amandahosts
-%attr(-,amanda,disk) %dir %{_localstatedir}/amanda/
+%attr(600,amanda,disk)  %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
+%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/
 %attr(-,amanda,disk) %dir %{_sysconfdir}/amanda/
 %attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amandates
 %{_mandir}/man8/amrestore.8*
@@ -360,8 +360,8 @@ rm -rf %{buildroot}
 %attr(-,amanda,disk) %{_sbindir}/amfetchdump
 %attr(-,amanda,disk) %{_sbindir}/amcrypt-ossl
 %attr(-,amanda,disk) %{_sbindir}/amcrypt-ossl-asym
-%attr(-,amanda,disk) %dir %{_localstatedir}/amanda/DailySet1/
-%attr(-,amanda,disk) %dir %{_localstatedir}/amanda/DailySet1/index
+%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/DailySet1/
+%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/DailySet1/index
 %attr(-,amanda,disk) %dir %{_sysconfdir}/amanda
 %attr(-,amanda,disk) %dir %{_sysconfdir}/amanda/DailySet1
 %attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amanda/DailySet1/amanda.conf
@@ -424,7 +424,7 @@ rm -rf %{buildroot}
 %attr(-,amanda,disk) %{_sbindir}/amoldrecover
 
 #%attr(-,amanda,disk) %{_sbindir}/security
-%attr(-,amanda,disk) %{_localstatedir}/amanda/gnutar-lists/
+%attr(-,amanda,disk) %{_localstatedir}/lib/amanda/gnutar-lists/
 %{_mandir}/man5/amanda-client.conf.5*
 %{_mandir}/man8/amaespipe.8*
 %{_mandir}/man8/amcrypt.8*
