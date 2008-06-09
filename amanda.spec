@@ -276,17 +276,29 @@ service xinetd condrestart
 %postun server
 service xinetd condrestart
 
+%if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post -n %{libname}-client -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun -n %{libname}-client -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %post -n %{libname}-server -p /sbin/ldconfig
+%endif
 
+%if %mdkversion < 200900
 %postun -n %{libname}-server -p /sbin/ldconfig
+%endif
 
 %clean 
 rm -rf %{buildroot}
