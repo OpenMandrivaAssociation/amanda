@@ -11,7 +11,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	2.5.1
-Release:	%mkrel 7
+Release:	%mkrel 8
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
@@ -32,6 +32,7 @@ Patch4:		amanda-2.5.0-no_uid_gid_suid_install.diff
 Patch5:		amanda-2.5.0-dvd.diff
 Patch6:		amanda-2.5.0-perlbang.diff
 Patch7:		amanda-2.5.1-ubuntu.diff
+Patch8:		amanda-linkage_fix.diff
 BuildRequires:	autoconf2.5
 BuildRequires:	automake1.7
 BuildRequires:	libtool
@@ -178,6 +179,7 @@ be used to develop amanda applications.
 #%patch5 -p1 -b .dvd
 %patch6 -p0 -b .perlbang
 %patch7 -p0 -b .dump
+%patch8 -p1 -b .linkage_fix
 
 # OE 20040517: fix soname
 find -name "Makefile.*" | xargs perl -pi -e "s|^libamanda_la_LDFLAGS.*|libamanda_la_LDFLAGS = -version-info %{amanda_version_info}|g"
