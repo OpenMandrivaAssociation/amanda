@@ -11,7 +11,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	2.5.1
-Release:	%mkrel 8
+Release:	%mkrel 9
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
@@ -25,10 +25,10 @@ Source6:	amandaidx-xinetd.bz2
 Source7:	amidxtape-xinetd.bz2
 Source8:	amandahosts.bz2
 Source9:	amanda.pdf
-Patch0:		amanda-2.4.2-bug18322.patch
+Patch0:		amanda-2.5.1-bug18322.patch
 Patch1:		amanda-2.4.2p2-append.patch
 Patch3:		amanda-2.5.0-no_private_libtool.m4.diff
-Patch4:		amanda-2.5.0-no_uid_gid_suid_install.diff
+Patch4:		amanda-2.5.1-no_uid_gid_suid_install.patch
 Patch5:		amanda-2.5.0-dvd.diff
 Patch6:		amanda-2.5.0-perlbang.diff
 Patch7:		amanda-2.5.1-ubuntu.diff
@@ -194,9 +194,10 @@ find -name "Makefile.*" | xargs perl -pi -e "s|^librestore_la_LDFLAGS.*|libresto
 
 export CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
 export SED=sed
-export WANT_AUTOCONF_2_5=1
-rm -f configure
-libtoolize --copy --force; aclocal-1.7; automake-1.7; autoconf
+#export WANT_AUTOCONF_2_5=1
+#rm -f configure
+#libtoolize --copy --force; aclocal-1.7; automake-1.7; autoconf
+autoreconf -fi
 
 %configure2_5x \
     --enable-shared \
