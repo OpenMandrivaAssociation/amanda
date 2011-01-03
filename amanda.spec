@@ -11,7 +11,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	2.5.1
-Release:	%mkrel 10
+Release:	%mkrel 11
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
@@ -34,7 +34,7 @@ Patch6:		amanda-2.5.0-perlbang.diff
 Patch7:		amanda-2.5.1-ubuntu.diff
 Patch8:		amanda-linkage_fix.diff
 BuildRequires:	autoconf2.5
-BuildRequires:	automake1.7
+BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	cups-common
 BuildRequires:	dump
@@ -196,7 +196,7 @@ export CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
 export SED=sed
 #export WANT_AUTOCONF_2_5=1
 #rm -f configure
-#libtoolize --copy --force; aclocal-1.7; automake-1.7; autoconf
+#libtoolize --copy --force; aclocal; automake; autoconf
 autoreconf -fi
 
 %configure2_5x \
