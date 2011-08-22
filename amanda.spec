@@ -1,457 +1,532 @@
-# OE 20040517: define soname (used right after %%setup)
-%define amanda_version_info 2:5:2
+%define _libexecdir %{_libdir}
+%define defconfig DailySet1
+%define indexserver amandahost
+%define tapeserver %{indexserver}
+%define amanda_user amandabackup
+%define amanda_group disk
+Summary: A network-capable tape backup solution
+Name: amanda
+Version: 3.2.3
+Release: %mkrel 1
+Source: http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
+Source1: amanda.crontab
+Source4: disklist
+Source5: amanda-xinetd
+Source8: amandahosts
+Patch1: amanda-3.1.0-example.patch
+Patch2: amanda-3.1.1-xattrs.patch
+Patch3: amanda-3.1.1-tcpport.patch
+Patch5: amanda-3.1.1-bsd.patch
+Patch6: amanda-3.2.0-config-dir.patch
+License: BSD
+Group: Archiving/Backup
+URL: http://www.amanda.org
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: automake autoconf libtool
+BuildRequires: dump gnuplot cups samba-client tar grep
+BuildRequires: gcc-c++ readline-devel
+BuildRequires: krb5-devel netkit-rsh openssh-clients ncompress mtx mt-st
+BuildRequires: perl-devel perl(ExtUtils::Embed) perl(Test::Simple)
+BuildRequires: glib2-devel openssl-devel swig bison flex
+BuildRequires: libcurl-devel
+Requires(pre): shadow-utils
+Requires(post): grep sed
+Requires: grep initscripts tar /bin/mail xinetd
+#Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+Obsoletes: amanda-devel < 2.6.1p2-5
+Provides: amanda-devel = 2.6.1p2-5
 
-%define major 0
-%define libname %mklibname amanda %{major}
-%define develname %mklibname amanda -d
-
-%define	_libexecdir %{_libdir}/amanda
-%define plevel %{nil}
-
-Summary:	A network-capable tape backup solution
-Name:		amanda
-Version:	2.5.1
-Release:	%mkrel 11
-License:	BSD
-Group:		Archiving/Backup
-URL:		http://www.amanda.org
-Source0:	http://download.sourceforge.net/amanda/amanda-%{version}%{plevel}.tar.bz2
-Source1:	amanda.crontab.bz2
-Source2:	__README_QUICKSETUP__.bz2
-Source3:	amanda.conf.bz2
-Source4:	disklist.bz2
-Source5:	amanda-xinetd.bz2
-Source6:	amandaidx-xinetd.bz2
-Source7:	amidxtape-xinetd.bz2
-Source8:	amandahosts.bz2
-Source9:	amanda.pdf
-Patch0:		amanda-2.5.1-bug18322.patch
-Patch1:		amanda-2.4.2p2-append.patch
-Patch3:		amanda-2.5.0-no_private_libtool.m4.diff
-Patch4:		amanda-2.5.1-no_uid_gid_suid_install.patch
-Patch5:		amanda-2.5.0-dvd.diff
-Patch6:		amanda-2.5.0-perlbang.diff
-Patch7:		amanda-2.5.1-ubuntu.diff
-Patch8:		amanda-linkage_fix.diff
-BuildRequires:	autoconf2.5
-BuildRequires:	automake
-BuildRequires:	libtool
-BuildRequires:	cups-common
-BuildRequires:	dump
-BuildRequires:	flex
-BuildRequires:	gettext-devel
-BuildRequires:	gnuplot
-BuildRequires:	libtermcap-devel
-BuildRequires:	mailx
-BuildRequires:	mt-st
-BuildRequires:	mtx
-BuildRequires:	openssh-clients
-BuildRequires:	readline-devel
-BuildRequires:	samba-client
-BuildRequires:	xfsdump
-BuildRequires:	openssl-devel
-ExcludeArch:	ia64
-Requires:	tar >= 1.15
-Requires:	libtermcap
-BuildRoot:	%{_tmppath}/%{name}-%{version}-root
+%global __perl_provides /bin/sh -c "/usr/lib/rpm/perl.prov | grep -v \\\"perl(Math::BigInt)\\\""
 
 %description 
 AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
-backup system that allows the administrator of a LAN to set up a single
-master backup server to back up multiple hosts to a single large capacity
-tape drive.  AMANDA uses native dump and/or GNU tar facilities and can
-back up a large number of workstations running multiple versions of Unix.
-Newer versions of AMANDA (including this version) can use SAMBA to back
-up Microsoft(TM) Windows95/NT hosts.  The amanda package contains the
-core AMANDA programs and will need to be installed on both AMANDA clients
-and AMANDA servers.  Note that you will have to install the amanda-client
-and amanda-server packages as well.
+backup system that allows the administrator of a LAN to set up a
+single master backup server to back up multiple hosts to one or more
+tape drives or disk files.  AMANDA uses native dump and/or GNU tar
+facilities and can back up a large number of workstations running
+multiple versions of Unix.  Newer versions of AMANDA (including this
+version) can use SAMBA to back up Microsoft(TM) Windows95/NT hosts.
+The amanda package contains the core AMANDA programs and will need to
+be installed on both AMANDA clients and AMANDA servers.  Note that you
+will have to install the amanda-client and/or amanda-server packages as
+well.
 
-%package	client
-Summary:	The client component of the AMANDA tape backup system
-Group:		Archiving/Backup
-Requires:	openssh-clients
-Requires:	xinetd
+%package client
+Summary: The client component of the AMANDA tape backup system
+Group: Archiving/Backup
+Requires: grep /sbin/service
+Requires(pre): amanda = %{version}-%{release}
 
-%description	client
+%description client
 The Amanda-client package should be installed on any machine that will
 be backed up by AMANDA (including the server if it also needs to be
-backed up).  You will also need to install the amanda package to each
-AMANDA client.
+backed up).  You will also need to install the amanda package on each
+AMANDA client machine.
 
-%package	server
-Summary:	The server side of the AMANDA tape backup system
-Group:		Archiving/Backup
-Requires:	gnuplot
-Requires:	mailx
-Requires:	mt-st
-Requires:	openssh-clients
-Requires:	openssh-server
-Requires:	xinetd
+%package server
+Summary: The server side of the AMANDA tape backup system
+Group: Archiving/Backup
+Requires: grep /sbin/service
+Requires(pre): amanda = %{version}-%{release}
 
-%description	server
+%description server
 The amanda-server package should be installed on the AMANDA server,
-the machine attached to the device (such as a tape drive) where backups
-will be written. You will also need to install the amanda package to
-the AMANDA server.  And, if the server is also to be backed up, the
+the machine attached to the device(s) (such as a tape drive) where backups
+will be written. You will also need to install the amanda package on
+the AMANDA server machine.  And, if the server is also to be backed up, the
 server also needs to have the amanda-client package installed.
 
-%package -n	%{libname}
-Summary:	Libraries and documentation of the AMANDA tape backup system
-Group:		Archiving/Backup
-Requires:	tar
-Requires(pre): rpm-helper
-Requires(postun): rpm-helper
-Provides:	lib%{name} = %{version}-%{release}
-
-%description -n %{libname}
-AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
-backup system that allows the administrator of a LAN to set up a single
-master backup server to back up multiple hosts to a single large capacity
-tape drive.  AMANDA uses native dump and/or GNU tar facilities and can
-back up a large number of workstations running multiple versions of Unix.
-Newer versions of AMANDA (including this version) can use SAMBA to back
-up Microsoft(TM) Windows95/NT hosts.  The amanda package contains the
-core AMANDA programs and will need to be installed on both AMANDA clients
-and AMANDA servers.  Note that you will have to install the amanda-client
-
-%package -n	%{libname}-client
-Summary:	Libraries for amanda client
-Group:		System/Libraries
-Provides:	lib%{name}-client = %{version}-%{release}
-# urpmi help
-Conflicts:	amanda-client <= 2.4.4-1mdk
-
-%description -n %{libname}-client
-AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
-backup system that allows the administrator of a LAN to set up a single
-master backup server to back up multiple hosts to a single large capacity
-tape drive.  AMANDA uses native dump and/or GNU tar facilities and can
-back up a large number of workstations running multiple versions of Unix.
-Newer versions of AMANDA (including this version) can use SAMBA to back
-up Microsoft(TM) Windows95/NT hosts.  The amanda package contains the
-core AMANDA programs and will need to be installed on both AMANDA clients
-and AMANDA servers.  Note that you will have to install the amanda-client
-
-%package -n	%{libname}-server
-Summary:	Libraries for amanda-server
-Group:		System/Libraries
-Provides:	lib%{name}-server = %{version}-%{release}
-# urpmi help
-Conflicts:	amanda-server <= 2.4.4-1mdk
-
-%description -n %{libname}-server
-AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
-backup system that allows the administrator of a LAN to set up a single
-master backup server to back up multiple hosts to a single large capacity
-tape drive.  AMANDA uses native dump and/or GNU tar facilities and can
-back up a large number of workstations running multiple versions of Unix.
-Newer versions of AMANDA (including this version) can use SAMBA to back
-up Microsoft(TM) Windows95/NT hosts.  The amanda package contains the
-core AMANDA programs and will need to be installed on both AMANDA clients
-and AMANDA servers.  Note that you will have to install the amanda-client
-
-%package -n	%{develname}
-Summary:	Libraries and documentation of the AMANDA tape backup system
-Group:		Development/Other
-Requires:	%{libname} = %{version}-%{release}
-Requires:	%{libname}-server = %{version}-%{release}
-Requires:	%{libname}-client = %{version}-%{release}
-Provides:	amanda-devel = %{version}-%{release}
-Provides:	lib%{name}-devel = %{version}-%{release}
-Obsoletes:	%{mklibname amanda 0 -d}
-
-%description -n %{develname}
-The libamanda-devel package should be installed on any machine that will
-be used to develop amanda applications.
-
 %prep
-
-%setup -q -n amanda-%{version}%{plevel}
-%patch0 -p1 -b .bug18322
-
-# re-apply this one when the patch is updated,
-# there's too many rejects as is.
-#%patch1 -p1 -b .append
-
-%patch3 -p0 -b .no_private_libtool
-%patch4 -p1 -b .no_uid_gid_suid_install
-#%patch5 -p1 -b .dvd
-%patch6 -p0 -b .perlbang
-%patch7 -p0 -b .dump
-%patch8 -p1 -b .linkage_fix
-
-# OE 20040517: fix soname
-find -name "Makefile.*" | xargs perl -pi -e "s|^libamanda_la_LDFLAGS.*|libamanda_la_LDFLAGS = -version-info %{amanda_version_info}|g"
-find -name "Makefile.*" | xargs perl -pi -e "s|^libamandad_la_LDFLAGS.*|libamandad_la_LDFLAGS = -version-info %{amanda_version_info}|g"
-find -name "Makefile.*" | xargs perl -pi -e "s|^libamclient_la_LDFLAGS.*|libamclient_la_LDFLAGS = -version-info %{amanda_version_info}|g"
-find -name "Makefile.*" | xargs perl -pi -e "s|^libamserver_la_LDFLAGS.*|libamserver_la_LDFLAGS = -version-info %{amanda_version_info}|g"
-find -name "Makefile.*" | xargs perl -pi -e "s|^libamtape_la_LDFLAGS.*|libamtape_la_LDFLAGS = -version-info %{amanda_version_info}|g"
-find -name "Makefile.*" | xargs perl -pi -e "s|^librestore_la_LDFLAGS.*|librestore_la_LDFLAGS = -version-info %{amanda_version_info}|g"
+%setup -q -n %{name}-%{version}
+%patch1 -p1 -b .example
+%patch2 -p1 -b .xattrs
+%patch3 -p1 -b .tcpport
+%patch5 -p1 -b .bsd
+%patch6 -p1 -b .config
+./autogen
 
 %build
-%serverbuild
+export MAILER=/bin/mail CFLAGS="$RPM_OPT_FLAGS -fPIE" LDFLAGS=-pie
+export CONFIGURE_XPATH=""
+./configure --enable-shared \
+	--disable-rpath \
+	--disable-static \
+	--disable-dependency-tracking \
+	--disable-installperms \
+	--program-prefix=%{?_program_prefix} \
+	--prefix=%{_prefix} \
+	--exec-prefix=%{_exec_prefix} \
+	--bindir=%{_bindir} \
+	--sbindir=%{_sbindir} \
+	--sysconfdir=%{_sysconfdir} \
+	--datadir=%{_datadir} \
+	--libdir=%{_libdir} \
+	--libexecdir=%{_libexecdir} \
+	--mandir=%{_mandir} \
+	--infodir=%{_infodir} \
+	--sharedstatedir=%{_sharedstatedir} \
+	--with-amdatadir=%{_localstatedir}/lib/amanda \
+	--with-amlibdir=%{_libdir} \
+	--with-amperldir=%{perl_vendorarch} \
+	--with-index-server=%{indexserver} \
+	--with-tape-server=%{tapeserver} \
+	--with-config=%{defconfig} \
+	--with-gnutar-listdir=%{_localstatedir}/lib/amanda/gnutar-lists \
+	--with-smbclient=%{_bindir}/smbclient \
+	--with-amandates=%{_localstatedir}/lib/amanda/amandates \
+	--with-amandahosts \
+	--with-user=%amanda_user \
+	--with-group=%amanda_group \
+	--with-tmpdir=/var/log/amanda \
+	--with-gnutar=/bin/tar \
+	--with-ssh-security \
+	--with-rsh-security \
+	--with-bsdtcp-security \
+	--with-bsdudp-security \
+	--with-krb5-security
 
-export CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
-export SED=sed
-#export WANT_AUTOCONF_2_5=1
-#rm -f configure
-#libtoolize --copy --force; aclocal; automake; autoconf
-autoreconf -fi
+make  %{?_smp_mflags}
 
-%configure2_5x \
-    --enable-shared \
-    --with-index-server=localhost \
-    --with-gnutar-listdir=%{_localstatedir}/lib/amanda/gnutar-lists \
-    --with-smbclient=%{_bindir}/smbclient \
-    --with-db=text \
-    --with-amandahosts \
-    --with-user=amanda \
-    --with-group=disk \
-    --with-gnutar=/bin/tar \
-    --program-transform-name="" \
-    --with-ssh-security \
-    --with-dumperdir=%{_libexecdir}
-
-%make
-
-# these won't build, why did we ship them?
-#(cd common-src; make security)
-#(cd tape-src; make tapetype)
 
 %install
-rm -rf %{buildroot}
+rm -rf ${RPM_BUILD_ROOT}
 
-install -d %{buildroot}%{_sysconfdir}/xinetd.d
-install -d %{buildroot}%{_sysconfdir}/amanda/DailySet1
-install -d %{buildroot}%{_localstatedir}/lib/amanda
-install -d %{buildroot}%{_localstatedir}/lib/amanda/gnutar-lists
-install -d %{buildroot}%{_localstatedir}/lib/amanda/DailySet1/index
+make install BINARY_OWNER=%(id -un) SETUID_GROUP=%(id -gn) DESTDIR=$RPM_BUILD_ROOT
 
-%makeinstall_std BINARY_OWNER=`id -un` SETUID_GROUP=`id -gn`
+mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
+cp %SOURCE5 $RPM_BUILD_ROOT/etc/xinetd.d/amanda
+chmod 644 $RPM_BUILD_ROOT/etc/xinetd.d/amanda
+mkdir -p $RPM_BUILD_ROOT/var/log/amanda
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/amanda
+install -m 600 %SOURCE8 $RPM_BUILD_ROOT%{_localstatedir}/lib/amanda/.amandahosts
 
-bzcat %{SOURCE5} > %{buildroot}%{_sysconfdir}/xinetd.d/amanda
-bzcat %{SOURCE6} > %{buildroot}%{_sysconfdir}/xinetd.d/amandaidx
-bzcat %{SOURCE7} > %{buildroot}%{_sysconfdir}/xinetd.d/amidxtape
-chmod 644 %{buildroot}%{_sysconfdir}/xinetd.d/*
+ln -s %{_libexecdir}/amanda/amandad $RPM_BUILD_ROOT%{_sbindir}/amandad
+#ln -s amrecover.8.gz $RPM_BUILD_ROOT%{_mandir}/man8/amoldrecover.8
 
-bzcat %{SOURCE8} > %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
-chmod 660 %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
+pushd ${RPM_BUILD_ROOT}
+  mv .%{_sysconfdir}/amanda/example .%{_sysconfdir}/amanda/%defconfig
+  cp ${RPM_SOURCE_DIR}/amanda.crontab .%{_sysconfdir}/amanda/crontab.sample
+  cp ${RPM_SOURCE_DIR}/disklist .%{_sysconfdir}/amanda/%defconfig
+  cp ${RPM_SOURCE_DIR}/disklist .%{_sysconfdir}/amanda/%defconfig
+  rm -f .%{_sysconfdir}/amanda/%defconfig/xinetd*
+  rm -f .%{_sysconfdir}/amanda/%defconfig/inetd*
 
-mkdir -p examples
-cp example/* examples
-rm -f examples/Makefile*
-rm -f examples/config.site
+  mkdir -p .%{_localstatedir}/lib/amanda/gnutar-lists
+  mkdir -p .%{_localstatedir}/lib/amanda/%defconfig/index
+  touch .%{_localstatedir}/lib/amanda/amandates
+popd
+rm -rf $RPM_BUILD_ROOT/usr/share/amanda
+find $RPM_BUILD_ROOT -name \*.la | xargs rm
 
-#cp common-src/security %{buildroot}%{_sbindir}
-
-bzcat %{SOURCE2} > docs/__README_QUICKSETUP__
-cp %{SOURCE9} docs/
-
-{ cd %{buildroot}
-  bzcat %{SOURCE1} > .%{_sysconfdir}/amanda/crontab.sample
-  bzcat %{SOURCE3} > .%{_sysconfdir}/amanda/DailySet1/amanda.conf
-  bzcat %{SOURCE4} > .%{_sysconfdir}/amanda/DailySet1/disklist
-  touch .%{_sysconfdir}/amandates
-
-  chmod 755 .%{_libdir}/lib* .%{_sbindir}/*
-}
-
-# remove installed docs which we let RPM handle to install
-rm -rf %{buildroot}%{_datadir}/amanda
-
-# lib64 fix
-perl -pi -e "s|/usr/lib|%{_libdir}|g" %{buildroot}%{_sysconfdir}/xinetd.d/*
-
-%pre -n %{libname}
-useradd -M -n -g disk -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
-	-c "system user for %{name}" amanda >/dev/null 2>&1 || :
-
-%post client
-service xinetd condrestart
-
-%postun client
-service xinetd condrestart
-
-%post server
-service xinetd condrestart
-
-%postun server
-service xinetd condrestart
-
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post -n %{libname}-client -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n %{libname}-client -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%post -n %{libname}-server -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -n %{libname}-server -p /sbin/ldconfig
-%endif
+%check
+make check
 
 %clean 
-rm -rf %{buildroot}
+rm -rf ${RPM_BUILD_ROOT}
 
-%files -n %{libname}
+%pre
+/usr/sbin/useradd -M -N -g %amanda_group -o -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
+	-c "Amanda user" -u 33 %amanda_user >/dev/null 2>&1 || :
+/usr/bin/gpasswd -a %amanda_user tape >/dev/null 2>&1 || :
+
+%post
+/sbin/ldconfig
+[ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
+
+%postun
+/sbin/ldconfig
+[ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
+
+%post client -p /sbin/ldconfig
+
+%post server -p /sbin/ldconfig
+
+%postun client -p /sbin/ldconfig
+
+%postun server -p /sbin/ldconfig
+
+%files
 %defattr(-,root,root)
-%{_libdir}/libamanda.so.*
-%{_libdir}/libamtape.so.*
-%{_libdir}/librestore.so.*
-%attr(-,amanda,disk) %{_sbindir}/amrestore
-%attr(600,amanda,disk)  %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
-%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/
-%attr(-,amanda,disk) %dir %{_sysconfdir}/amanda/
-%attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amandates
-%{_mandir}/man8/amrestore.8*
-%{_mandir}/man5/amanda.conf.5*
+%doc COPYRIGHT* NEWS README
+%config(noreplace) /etc/xinetd.d/amanda
+
+%{_libdir}/libamanda-*.so
+%{_libdir}/libamanda.so
+%{_libdir}/libamandad*.so
+%{_libdir}/libamar*.so
+%{_libdir}/libamglue*.so
+%{_libdir}/libamxfer*.so
+%{_libdir}/libndmjob*.so
+%{_libdir}/libndmlib*.so
+
+%dir %{_libexecdir}/amanda
+%{_libexecdir}/amanda/amandad
+%{_libexecdir}/amanda/amanda-sh-lib.sh
+%{_libexecdir}/amanda/amcat.awk
+%{_libexecdir}/amanda/amndmjob
+%{_libexecdir}/amanda/amplot.awk
+%{_libexecdir}/amanda/amplot.g
+%{_libexecdir}/amanda/amplot.gp
+%{_libexecdir}/amanda/ndmjob
+
+%{_sbindir}/amandad
+%{_sbindir}/amaespipe
+%{_sbindir}/amarchiver
+%{_sbindir}/amcrypt
+%{_sbindir}/amcrypt-ossl
+%{_sbindir}/amcrypt-ossl-asym
+%{_sbindir}/amcryptsimple
+%{_sbindir}/amgetconf
+%{_sbindir}/amgpgcrypt
+%{_sbindir}/amplot
+
+%{perl_vendorarch}/Amanda/Archive.pm
+%{perl_vendorarch}/Amanda/BigIntCompat.pm
+%{perl_vendorarch}/Amanda/ClientService.pm
+%{perl_vendorarch}/Amanda/Config.pm
+%{perl_vendorarch}/Amanda/Config/
+%{perl_vendorarch}/Amanda/Constants.pm
+%{perl_vendorarch}/Amanda/Debug.pm
+%{perl_vendorarch}/Amanda/Feature.pm
+%{perl_vendorarch}/Amanda/Header.pm
+%{perl_vendorarch}/Amanda/IPC
+%{perl_vendorarch}/Amanda/MainLoop.pm
+%{perl_vendorarch}/Amanda/NDMP.pm
+%{perl_vendorarch}/Amanda/Paths.pm
+%{perl_vendorarch}/Amanda/Process.pm
+%{perl_vendorarch}/Amanda/Script_App.pm
+%{perl_vendorarch}/Amanda/Script.pm
+%{perl_vendorarch}/Amanda/Tests.pm
+%{perl_vendorarch}/Amanda/Util.pm
+%{perl_vendorarch}/Amanda/Xfer.pm
+%{perl_vendorarch}/auto/Amanda/Archive/
+%{perl_vendorarch}/auto/Amanda/Config/
+%{perl_vendorarch}/auto/Amanda/Debug/
+%{perl_vendorarch}/auto/Amanda/Feature/
+%{perl_vendorarch}/auto/Amanda/Header/
+%{perl_vendorarch}/auto/Amanda/IPC/
+%{perl_vendorarch}/auto/Amanda/MainLoop/
+%{perl_vendorarch}/auto/Amanda/NDMP/
+%{perl_vendorarch}/auto/Amanda/Tests/
+%{perl_vendorarch}/auto/Amanda/Util/
+%{perl_vendorarch}/auto/Amanda/Xfer/
+
+%{_mandir}/man5/amanda-archive-format.5*
+%{_mandir}/man7/amanda-compatibility.7*
+%{_mandir}/man5/amanda.conf*
+%{_mandir}/man7/amanda-auth.7*
+%{_mandir}/man7/amanda-match.7*
+%{_mandir}/man7/amanda-scripts.7*
+%{_mandir}/man8/amanda.8*
+%{_mandir}/man8/amarchiver.8*
+%{_mandir}/man8/amplot.8*
+%{_mandir}/man8/script-email.8*
+%{_mandir}/man8/amaespipe.8*
+%{_mandir}/man8/amcrypt-ossl-asym.8*
+%{_mandir}/man8/amcrypt-ossl.8*
+%{_mandir}/man8/amcryptsimple.8*
+%{_mandir}/man8/amcrypt.8*
+%{_mandir}/man8/amgpgcrypt.8*
+%{_mandir}/man8/amgetconf.8*
+
+%dir %{_sysconfdir}/amanda/
+%dir %{_sysconfdir}/amanda/%defconfig
+
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/
+%attr(600,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
+%attr(02700,%amanda_user,%amanda_group) %dir /var/log/amanda
 
 %files server
 %defattr(-,root,root)
-%doc examples COPYRIGHT* NEWS README ReleaseNotes
-%doc docs/*.txt
-%config(noreplace) %{_sysconfdir}/xinetd.d/amandaidx
-%config(noreplace) %{_sysconfdir}/xinetd.d/amidxtape
-%attr(-,amanda,disk) %dir %{_libexecdir}
-%attr(-,amanda,disk) %{_libexecdir}/amidxtaped
-%attr(-,amanda,disk) %{_libexecdir}/amindexd
-%attr(-,amanda,disk) %{_libexecdir}/amlogroll
-%attr(-,amanda,disk) %{_libexecdir}/amtrmidx
-%attr(-,amanda,disk) %{_libexecdir}/amtrmlog
-%attr(-,amanda,disk) %{_libexecdir}/driver
-%attr(4750,root,disk) %{_libexecdir}/dumper
-%attr(4750,root,disk) %{_libexecdir}/planner
-%attr(-,amanda,disk) %{_libexecdir}/taper
-%attr(-,amanda,disk) %{_libexecdir}/amcleanupdisk
-%attr(-,amanda,disk) %{_libexecdir}/chg-scsi
-%attr(-,amanda,disk) %{_libexecdir}/chg-manual
-%attr(-,amanda,disk) %{_libexecdir}/chg-multi
-%attr(-,amanda,disk) %{_libexecdir}/chg-mtx
-%attr(-,amanda,disk) %{_libexecdir}/chg-rth
-%attr(-,amanda,disk) %{_libexecdir}/chg-chs
-%attr(-,amanda,disk) %{_libexecdir}/chg-chio
-%attr(-,amanda,disk) %{_libexecdir}/chg-zd-mtx
-%attr(-,amanda,disk) %{_libexecdir}/chg-iomega
-%attr(-,amanda,disk) %{_libexecdir}/chunker
-%attr(-,amanda,disk) %{_libexecdir}/amcat.awk
-%attr(-,amanda,disk) %{_libexecdir}/amplot.awk
-%attr(-,amanda,disk) %{_libexecdir}/amplot.g
-%attr(-,amanda,disk) %{_libexecdir}/amplot.gp
-%attr(-,amanda,disk) %{_libexecdir}/generic-dumper
-%attr(-,amanda,disk) %{_libexecdir}/gnutar
-%attr(-,amanda,disk) %{_sbindir}/amadmin
-%attr(4750,root,disk) %{_sbindir}/amcheck
-%attr(-,amanda,disk) %{_sbindir}/amflush
-%attr(-,amanda,disk) %{_sbindir}/amgetconf
-%attr(-,amanda,disk) %{_sbindir}/amlabel
-%attr(-,amanda,disk) %{_sbindir}/amtape
-%attr(-,amanda,disk) %{_sbindir}/amreport
-%attr(-,amanda,disk) %{_sbindir}/amcheckdb
-%attr(-,amanda,disk) %{_sbindir}/amcleanup
-%attr(-,amanda,disk) %{_sbindir}/amdump
-%attr(-,amanda,disk) %{_sbindir}/amoverview
-%attr(-,amanda,disk) %{_sbindir}/amrmtape
-%attr(-,amanda,disk) %{_sbindir}/amtoc
-%attr(-,amanda,disk) %{_sbindir}/amverify
-%attr(-,amanda,disk) %{_sbindir}/amstatus
-%attr(-,amanda,disk) %{_sbindir}/amplot
-%attr(-,amanda,disk) %{_sbindir}/amdd
-%attr(-,amanda,disk) %{_sbindir}/ammt
-%attr(-,amanda,disk) %{_sbindir}/amverifyrun
-%attr(-,amanda,disk) %{_sbindir}/amtapetype
-%attr(-,amanda,disk) %{_sbindir}/amfetchdump
-%attr(-,amanda,disk) %{_sbindir}/amcrypt-ossl
-%attr(-,amanda,disk) %{_sbindir}/amcrypt-ossl-asym
-%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/DailySet1/
-%attr(-,amanda,disk) %dir %{_localstatedir}/lib/amanda/DailySet1/index
-%attr(-,amanda,disk) %dir %{_sysconfdir}/amanda
-%attr(-,amanda,disk) %dir %{_sysconfdir}/amanda/DailySet1
-%attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amanda/DailySet1/amanda.conf
-%attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amanda/crontab.sample
-%attr(-,amanda,disk) %config(noreplace) %{_sysconfdir}/amanda/DailySet1/disklist
+%{_libdir}/libamdevice*.so
+%{_libdir}/libamserver*.so
+%{_libexecdir}/amanda/amcleanupdisk
+%{_libexecdir}/amanda/amcheck-device
+%{_libexecdir}/amanda/amidxtaped
+%{_libexecdir}/amanda/amindexd
+%{_libexecdir}/amanda/amlogroll
+%{_libexecdir}/amanda/amtrmidx
+%{_libexecdir}/amanda/amtrmlog
+%{_libexecdir}/amanda/driver
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/dumper
+%{_libexecdir}/amanda/chg-disk
+%{_libexecdir}/amanda/chg-lib.sh
+%{_libexecdir}/amanda/chg-manual
+%{_libexecdir}/amanda/chg-multi
+%{_libexecdir}/amanda/chg-zd-mtx
+%{_libexecdir}/amanda/chunker
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/planner
+%{_libexecdir}/amanda/taper
+%{_sbindir}/activate-devpay
+%{_sbindir}/amaddclient
+%{_sbindir}/amadmin
+%{_sbindir}/amcleanup
+%{_sbindir}/amdevcheck
+%{_sbindir}/amdump
+%{_sbindir}/amfetchdump
+%{_sbindir}/amflush
+%attr(4750,root,%amanda_group) %{_sbindir}/amcheck
+%{_sbindir}/amcheckdb
+%{_sbindir}/amcheckdump
+%{_sbindir}/amlabel
+%{_sbindir}/amoverview
+%{_sbindir}/amreport
+%{_sbindir}/amrestore
+%{_sbindir}/amrmtape
+%{_sbindir}/amserverconfig
+%attr(4750,root,%amanda_group) %{_sbindir}/amservice
+%{_sbindir}/amstatus
+%{_sbindir}/amtape
+%{_sbindir}/amtapetype
+%{_sbindir}/amtoc
+%{_sbindir}/amvault
 
-%{_mandir}/man8/amplot.8*
-%{_mandir}/man8/amanda.8*
+%{_mandir}/man5/disklist.5*
+%{_mandir}/man5/tapelist.5*
+%{_mandir}/man7/amanda-devices.7*
+%{_mandir}/man7/amanda-changers.7*
+%{_mandir}/man7/amanda-taperscan.7*
+%{_mandir}/man8/amaddclient.8*
 %{_mandir}/man8/amadmin.8*
-%{_mandir}/man8/amcheck.8*
-%{_mandir}/man8/amcheckdb.8*
 %{_mandir}/man8/amcleanup.8*
+%{_mandir}/man8/amdevcheck.8*
 %{_mandir}/man8/amdump.8*
+%{_mandir}/man8/amfetchdump.8*
 %{_mandir}/man8/amflush.8*
+%{_mandir}/man8/amcheckdb.8*
+%{_mandir}/man8/amcheckdump.8*
+%{_mandir}/man8/amcheck.8*
 %{_mandir}/man8/amlabel.8*
 %{_mandir}/man8/amoverview.8*
+%{_mandir}/man8/amreport.8*
+%{_mandir}/man8/amrestore.8*
 %{_mandir}/man8/amrmtape.8*
+%{_mandir}/man8/amserverconfig.8*
+%{_mandir}/man8/amservice.8*
+%{_mandir}/man8/amstatus.8*
+%{_mandir}/man8/amtapetype.8*
 %{_mandir}/man8/amtape.8*
 %{_mandir}/man8/amtoc.8*
-%{_mandir}/man8/amverify.8*
-%{_mandir}/man8/amstatus.8*
-%{_mandir}/man8/amreport.8*
-%{_mandir}/man8/amdd.8*
-%{_mandir}/man8/amgetconf.8*
-%{_mandir}/man8/ammt.8*
-%{_mandir}/man8/amverifyrun.8*
-%{_mandir}/man8/amtapetype.8*
-%{_mandir}/man8/amfetchdump.8*
-%{_mandir}/man8/amcrypt-ossl-asym.8*
-%{_mandir}/man8/amcrypt-ossl.8*
+%{_mandir}/man8/amvault.8*
 
-%files -n %{libname}-server
-%defattr(-,root,root)
-%{_libdir}/libamserver.so.*
+%{perl_vendorarch}/Amanda/Cmdline.pm
+%{perl_vendorarch}/Amanda/Curinfo/
+%{perl_vendorarch}/Amanda/Curinfo.pm
+%{perl_vendorarch}/Amanda/DB/
+%{perl_vendorarch}/Amanda/Device.pm
+%{perl_vendorarch}/Amanda/Disklist.pm
+%{perl_vendorarch}/Amanda/Holding.pm
+%{perl_vendorarch}/Amanda/Changer/
+%{perl_vendorarch}/Amanda/Changer.pm
+%{perl_vendorarch}/Amanda/Interactive/
+%{perl_vendorarch}/Amanda/Interactive.pm
+%{perl_vendorarch}/Amanda/Logfile.pm
+%{perl_vendorarch}/Amanda/Recovery/
+%{perl_vendorarch}/Amanda/Report/
+%{perl_vendorarch}/Amanda/Report.pm
+%{perl_vendorarch}/Amanda/Tapelist.pm
+%{perl_vendorarch}/Amanda/Taper/
+%{perl_vendorarch}/Amanda/XferServer.pm
+%{perl_vendorarch}/auto/Amanda/Cmdline/
+%{perl_vendorarch}/auto/Amanda/Device/
+%{perl_vendorarch}/auto/Amanda/Disklist/
+%{perl_vendorarch}/auto/Amanda/Logfile/
+%{perl_vendorarch}/auto/Amanda/Tapelist/
+%{perl_vendorarch}/auto/Amanda/XferServer/
+
+%config(noreplace) %{_sysconfdir}/amanda/crontab.sample
+%config(noreplace) %{_sysconfdir}/amanda/%defconfig/*
+%exclude %{_sysconfdir}/amanda/%defconfig/amanda-client.conf
+%exclude %{_sysconfdir}/amanda/%defconfig/amanda-client-postgresql.conf
+
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%defconfig/
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%defconfig/index
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/template.d
+%attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
 
 %files client
 %defattr(-,root,root)
-%config(noreplace) %{_sysconfdir}/xinetd.d/amanda
-%attr(-,amanda,disk) %dir %{_libexecdir}
-%attr(-,amanda,disk) %{_libexecdir}/amandad
-%attr(4750,root,disk) %{_libexecdir}/calcsize
-%attr(4750,root,disk) %{_libexecdir}/killpgrp
-%attr(-,amanda,disk) %{_libexecdir}/patch-system
-%attr(4750,root,disk) %{_libexecdir}/rundump
-%attr(4750,root,disk) %{_libexecdir}/runtar
-%attr(-,amanda,disk) %{_libexecdir}/selfcheck
-%attr(-,amanda,disk) %{_libexecdir}/sendbackup
-%attr(-,amanda,disk) %{_libexecdir}/sendsize
-%attr(-,amanda,disk) %{_libexecdir}/versionsuffix
-%attr(-,amanda,disk) %{_libexecdir}/chg-juke
-%attr(-,amanda,disk) %{_libexecdir}/chg-rait
-#%attr(-,amanda,disk) %{_libexecdir}/amqde
-%attr(-,amanda,disk) %{_libexecdir}/chg-disk
-%attr(-,amanda,disk) %{_libexecdir}/chg-mcutil
-%attr(-,amanda,disk) %{_libexecdir}/chg-null
-%attr(-,amanda,disk) %{_libexecdir}/noop
-%attr(-,amanda,disk) %{_sbindir}/amaespipe
-%attr(-,amanda,disk) %{_sbindir}/amcrypt
-%attr(-,amanda,disk) %{_sbindir}/amrecover
-%attr(-,amanda,disk) %{_sbindir}/amoldrecover
+%{_libdir}/libamclient*.so
 
-#%attr(-,amanda,disk) %{_sbindir}/security
-%attr(-,amanda,disk) %{_localstatedir}/lib/amanda/gnutar-lists/
+%dir %{_libexecdir}/amanda/application/
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/application/amgtar
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/application/amstar
+%{_libexecdir}/amanda/application/amlog-script
+%{_libexecdir}/amanda/application/ampgsql
+%{_libexecdir}/amanda/application/amraw
+%{_libexecdir}/amanda/application/amsamba
+%{_libexecdir}/amanda/application/amsuntar
+%{_libexecdir}/amanda/application/amzfs-sendrecv
+%{_libexecdir}/amanda/application/amzfs-snapshot
+%{_libexecdir}/amanda/application/script-email
+
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/calcsize
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/killpgrp
+%{_libexecdir}/amanda/noop
+%{_libexecdir}/amanda/patch-system
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/rundump
+%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/runtar
+%{_libexecdir}/amanda/selfcheck
+%{_libexecdir}/amanda/sendbackup
+%{_libexecdir}/amanda/sendsize
+%{_libexecdir}/amanda/teecount
+%{_sbindir}/amoldrecover
+%{_sbindir}/amrecover
+
+%{_mandir}/man7/amanda-applications.7*
 %{_mandir}/man5/amanda-client.conf.5*
-%{_mandir}/man8/amaespipe.8*
-%{_mandir}/man8/amcrypt.8*
+%{_mandir}/man8/amgtar.8*
+%{_mandir}/man8/ampgsql.8*
+%{_mandir}/man8/amraw.8*
 %{_mandir}/man8/amrecover.8*
+#%{_mandir}/man8/amoldrecover.8*
+%{_mandir}/man8/amsamba.8*
+%{_mandir}/man8/amstar.8*
+%{_mandir}/man8/amsuntar.8*
+%{_mandir}/man8/amzfs-sendrecv.8*
+%{_mandir}/man8/amzfs-snapshot.8*
 
-%files -n %{libname}-client
-%defattr(-,root,root)
-%{_libdir}/libamclient.so.*
-%{_libdir}/libamandad.so.*
+%{perl_vendorarch}/Amanda/Application.pm
+%{perl_vendorarch}/Amanda/Application/
+%{perl_vendorarch}/auto/Amanda/Application/
 
-%files -n %{develname}
-%defattr(-,root,root)
-%{_libdir}/lib*.a
-%{_libdir}/lib*.la
-%{_libdir}/lib*.so
+%config(noreplace) %{_sysconfdir}/amanda/%defconfig/amanda-client.conf
+%config(noreplace) %{_sysconfdir}/amanda/%defconfig/amanda-client-postgresql.conf
+
+%attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/amandates
+%attr(-,%amanda_user,%amanda_group) %{_localstatedir}/lib/amanda/gnutar-lists/
+
+
+%changelog
+* Mon Aug 22 2011 Alexander Khryukin <alexander@mezon.ru> 3.2.3-1mdv2011.0
++ Revision: n\a
+- Version bump to 3.2.3
+  + Alexander Khryukin
+    - spec file merged with spec from fedora and added mandriva fixes
+
+* Mon Sep 29 2008 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-8mdv2009.0
++ Revision: 289339
+- fix linkage
+
+  + Thierry Vignaud <tvignaud@mandriva.com>
+    - rebuild
+    - rebuild
+    - kill re-definition of %%buildroot on Pixel's request
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+    - adapt to %%_localstatedir now being /var instead of /var/lib (#22312)
+
+  + Olivier Blin <oblin@mandriva.com>
+    - restore BuildRoot
+
+* Fri Dec 14 2007 Thierry Vignaud <tvignaud@mandriva.com> 2.5.1-5mdv2008.1
++ Revision: 119836
+- rebuild b/c of missing subpackage on ia32
+
+* Sun Sep 09 2007 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-4mdv2008.0
++ Revision: 83526
+- new devel naming
+
+
+* Thu Mar 01 2007 Emmanuel Andry <eandry@mandriva.org> 2.5.1-3mdv2007.0
++ Revision: 130266
+- rebuild for libintl
+
+  + Oden Eriksson <oeriksson@mandriva.com>
+    - rebuilt against new libintl major (8)
+
+* Fri Dec 22 2006 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-1mdv2007.1
++ Revision: 101529
+- Import amanda
+
+* Sun Sep 17 2006 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-1mdv2007.0
+- 2.5.1
+- deactivated P5 as it needs to be updated (DVD support)
+- added P7 from the sf tracker
+
+* Wed Aug 23 2006 Oden Eriksson <oeriksson@mandriva.com> 2.5.0-2mdv2007.0
+- 2.5.0-p2
+- fix deps
+
+* Tue Mar 28 2006 Oden Eriksson <oeriksson@mandriva.com> 2.5.0-1mdk
+- 2.5.0
+- rediffed P3,P4,P5
+- dropped P2
+
+* Sun Mar 12 2006 Oden Eriksson <oeriksson@mandriva.com> 2.4.5p1-1mdk
+- 2.4.5p1
+- rediffed P3
+- added the dvd patch (P5)
+- added one silly lib64 fix
+- fixed the xinetd restart (duh!)
+
+* Thu May 05 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.5-2mdk
+- added P3 to stop setting chown and suid bits
+- use the %%mkrel macro
+
+* Mon Apr 25 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.5-1mdk
+- 2.4.5
+
+* Fri Feb 04 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p4-3mdk
+- rebuilt against new readline
+
+* Fri Dec 24 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p4-2mdk
+- added P3 to make it build on 10.0 (thanks pld!)
+
+* Fri Dec 24 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p4-1mdk
+- 2.4.4p4
+
+* Sat Jul 03 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p3-1mdk
+- 2.4.4p3
+
+* Fri May 21 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p2-2mdk
+- added P2 (fedora)
+- fix deps
+
+* Tue May 18 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 2.4.4p2-1mdk
+- 2.4.4p2
+- fix soname
+- use the %%configure2_5x macro
+- misc spec file fixes
+
