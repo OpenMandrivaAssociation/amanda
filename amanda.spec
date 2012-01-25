@@ -7,7 +7,7 @@
 Summary: A network-capable tape backup solution
 Name: amanda
 Version: 3.2.3
-Release: %mkrel 1
+Release:	3
 Source: http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
 Source1: amanda.crontab
 Source4: disklist
