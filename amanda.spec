@@ -17,7 +17,6 @@ Source8:	amandahosts
 Patch1:		amanda-3.1.0-example.patch
 Patch2:		amanda-3.1.1-xattrs.patch
 Patch3:		amanda-3.1.1-tcpport.patch
-Patch5:		amanda-3.1.1-bsd.patch
 Patch6:		amanda-3.2.0-config-dir.patch
 Patch7:		amanda-3.3.0-drop-conflicting-g_queue_free_full.patch
 Patch8:		amanda-3.3.0-qw.patch
@@ -158,7 +157,6 @@ Amanda libamclient library.
 %patch1 -p1 -b .example
 %patch2 -p1 -b .xattrs
 %patch3 -p1 -b .tcpport
-%patch5 -p1 -b .bsd
 %patch6 -p1 -b .config
 %patch7 -p1 -b .g_queue_free_full~
 %patch8 -p3 -b .qw~
