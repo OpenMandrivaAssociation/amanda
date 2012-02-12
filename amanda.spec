@@ -36,8 +36,7 @@ BuildRequires:	libcurl-devel
 Requires(pre):	shadow-utils
 Requires(post):	grep sed
 Requires:	grep initscripts tar /bin/mail xinetd
-Obsoletes:	amanda-devel < 2.6.1p2-5
-Provides:	amanda-devel = 2.6.1p2-5
+%rename		amanda-devel
 
 %define _provides_exceptions perl(Math::BigInt)
 
