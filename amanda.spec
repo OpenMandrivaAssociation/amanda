@@ -36,7 +36,6 @@ BuildRequires:	libcurl-devel
 Requires(pre):	shadow-utils
 Requires(post):	grep sed
 Requires:	grep initscripts tar /bin/mail xinetd
-#Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 Obsoletes:	amanda-devel < 2.6.1p2-5
 Provides:	amanda-devel = 2.6.1p2-5
 
@@ -213,7 +212,6 @@ mkdir -p %{buildroot}%{_var}/log/amanda
 install -m600 %{SOURCE8} -D %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
 
 ln -s %{_libexecdir}/amanda/amandad %{buildroot}%{_sbindir}/amandad
-#ln -s amrecover.8.gz $RPM_BUILD_ROOT%{_mandir}/man8/amoldrecover.8
 
 mv %{buildroot}%{_sysconfdir}/amanda/example %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
 install -m644 %{SOURCE1} -D %{buildroot}%{_sysconfdir}/amanda/crontab.sample
@@ -504,7 +502,6 @@ make check
 %{_mandir}/man8/ampgsql.8*
 %{_mandir}/man8/amraw.8*
 %{_mandir}/man8/amrecover.8*
-#%{_mandir}/man8/amoldrecover.8*
 %{_mandir}/man8/amsamba.8*
 %{_mandir}/man8/amstar.8*
 %{_mandir}/man8/amsuntar.8*
