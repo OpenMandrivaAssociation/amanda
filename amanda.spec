@@ -80,6 +80,62 @@ will be written. You will also need to install the amanda package on
 the AMANDA server machine.  And, if the server is also to be backed up, the
 server also needs to have the amanda-client package installed.
 
+%define libamanda %mklibname amanda %{version}
+%package -n	%{libamanda}
+Summary:	Amanda libamanda library
+Group:		System/Libraries
+
+%description -n	%{libamanda}
+Amanda libamanda library.
+
+%define libamandad %mklibname amandad %{version}
+%package -n	%{libamandad}
+Summary:	Amanda libamandad library
+Group:		System/Libraries
+
+%description -n	%{libamandad}
+Amanda libamandad library.
+
+%define libamar %mklibname amar %{version}
+%package -n	%{libamar}
+Summary:	Amanda libamar library
+Group:		System/Libraries
+
+%description -n	%{libamar}
+Amanda libamar library.
+
+%define libamglue %mklibname amglue %{version}
+%package -n	%{libamglue}
+Summary:	Amanda libamglue library
+Group:		System/Libraries
+
+%description -n	%{libamglue}
+Amanda libamglue library.
+
+%define libamxfer %mklibname amxfer %{version}
+%package -n	%{libamxfer}
+Summary:	Amanda libamxfer library
+Group:		System/Libraries
+
+%description -n	%{libamxfer}
+Amanda libamxfer library.
+
+%define libndmjob %mklibname ndmjob %{version}
+%package -n	%{libndmjob}
+Summary:	Amanda libndmjob library
+Group:		System/Libraries
+
+%description -n	%{libndmjob}
+Amanda libndmjob library.
+
+%define libndmlib %mklibname ndmlib %{version}
+%package -n	%{libndmlib}
+Summary:	Amanda libndmlib library
+Group:		System/Libraries
+
+%description -n	%{libndmlib}
+Amanda libndmlib library.
+
 %prep
 %setup -q
 %patch1 -p1 -b .example
@@ -161,18 +217,37 @@ make check
 %postun
 [ -f %{_var}/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
 
+%files -n %{libamanda}
+%{_libdir}/libamanda-%{version}.so
+%{_libdir}/libamanda.so
+
+%files -n %{libamandad}
+%{_libdir}/libamandad-%{version}.so
+%{_libdir}/libamandad.so
+
+%files -n %{libamar}
+%{_libdir}/libamar-%{version}.so
+%{_libdir}/libamar.so
+
+%files -n %{libamglue}
+%{_libdir}/libamglue-%{version}.so
+%{_libdir}/libamglue.so
+
+%files -n %{libamxfer}
+%{_libdir}/libamxfer-%{version}.so
+%{_libdir}/libamxfer.so
+
+%files -n %{libndmjob}
+%{_libdir}/libndmjob-%{version}.so
+%{_libdir}/libndmjob.so
+
+%files -n %{libndmlib}
+%{_libdir}/libndmlib-%{version}.so
+%{_libdir}/libndmlib.so
+
 %files
 %doc COPYRIGHT* NEWS README
 %config(noreplace) %{_sysconfdir}/xinetd.d/amanda
-
-%{_libdir}/libamanda-*.so
-%{_libdir}/libamanda.so
-%{_libdir}/libamandad*.so
-%{_libdir}/libamar*.so
-%{_libdir}/libamglue*.so
-%{_libdir}/libamxfer*.so
-%{_libdir}/libndmjob*.so
-%{_libdir}/libndmlib*.so
 
 %dir %{_libexecdir}/amanda
 %{_libexecdir}/amanda/amandad
