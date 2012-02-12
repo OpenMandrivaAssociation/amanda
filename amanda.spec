@@ -255,6 +255,7 @@ make check
 %{_libdir}/libamdevice*.so
 %{_libdir}/libamserver*.so
 %{_libexecdir}/amanda/amcleanupdisk
+%{_libexecdir}/amanda/amdumpd
 %{_libexecdir}/amanda/amcheck-device
 %{_libexecdir}/amanda/amidxtaped
 %{_libexecdir}/amanda/amindexd
@@ -299,6 +300,7 @@ make check
 %{_mandir}/man5/tapelist.5*
 %{_mandir}/man7/amanda-devices.7*
 %{_mandir}/man7/amanda-changers.7*
+%{_mandir}/man7/amanda-interactivity.7*
 %{_mandir}/man7/amanda-taperscan.7*
 %{_mandir}/man8/amaddclient.8*
 %{_mandir}/man8/amadmin.8*
@@ -338,6 +340,7 @@ make check
 %{perl_vendorarch}/Amanda/Recovery/
 %{perl_vendorarch}/Amanda/Report/
 %{perl_vendorarch}/Amanda/Report.pm
+%{perl_vendorarch}/Amanda/ScanInventory.pm
 %{perl_vendorarch}/Amanda/Tapelist.pm
 %{perl_vendorarch}/Amanda/Taper/
 %{perl_vendorarch}/Amanda/XferServer.pm
@@ -383,10 +386,12 @@ make check
 %{_libexecdir}/amanda/sendbackup
 %{_libexecdir}/amanda/sendsize
 %{_libexecdir}/amanda/teecount
+%{_sbindir}/amdump_client
 %{_sbindir}/amoldrecover
 %{_sbindir}/amrecover
 
 %{_mandir}/man7/amanda-applications.7*
+%{_mandir}/man8/amdump_client.8*
 %{_mandir}/man5/amanda-client.conf.5*
 %{_mandir}/man8/amgtar.8*
 %{_mandir}/man8/ampgsql.8*
