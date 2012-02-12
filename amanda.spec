@@ -14,7 +14,6 @@ Source1:	amanda.crontab
 Source4:	disklist
 Source5:	amanda-xinetd
 Source8:	amandahosts
-Patch1:		amanda-3.1.0-example.patch
 Patch2:		amanda-3.1.1-xattrs.patch
 Patch3:		amanda-3.1.1-tcpport.patch
 Patch6:		amanda-3.2.0-config-dir.patch
@@ -154,7 +153,6 @@ Amanda libamclient library.
 
 %prep
 %setup -q
-%patch1 -p1 -b .example
 %patch2 -p1 -b .xattrs
 %patch3 -p1 -b .tcpport
 %patch6 -p1 -b .config
@@ -205,7 +203,8 @@ install -m600 %{SOURCE8} -D %{buildroot}%{_localstatedir}/lib/amanda/.amandahost
 
 ln -s %{_libexecdir}/amanda/amandad %{buildroot}%{_sbindir}/amandad
 
-mv %{buildroot}%{_sysconfdir}/amanda/example %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
+mkdir -p %{buildroot}%{_sysconfdir}/amanda
+mv %{buildroot}%{_localstatedir}/lib/amanda/example %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
 install -m644 %{SOURCE1} -D %{buildroot}%{_sysconfdir}/amanda/crontab.sample
 install -m644 %{SOURCE4} -D %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
 rm -f %{buildroot}%{_sysconfdir}/amanda/%{defconfig}/xinetd*
