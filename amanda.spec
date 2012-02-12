@@ -40,7 +40,7 @@ Requires:	grep initscripts tar /bin/mail xinetd
 Obsoletes:	amanda-devel < 2.6.1p2-5
 Provides:	amanda-devel = 2.6.1p2-5
 
-%global __perl_provides /bin/sh -c "/usr/lib/rpm/perl.prov | grep -v \\\"perl(Math::BigInt)\\\""
+%define _provides_exceptions perl(Math::BigInt)
 
 %description 
 AMANDA, the Advanced Maryland Automatic Network Disk Archiver, is a
