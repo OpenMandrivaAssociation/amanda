@@ -3,6 +3,8 @@
 %define tapeserver %{indexserver}
 %define amanda_user amandabackup
 %define amanda_group disk
+%define	_disable_ld_no_undefined 1
+
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	3.3.0
