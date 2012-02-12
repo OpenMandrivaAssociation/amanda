@@ -26,13 +26,11 @@ Patch10:	amanda-3.3.0-g_thread-deprecated.patch
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
-BuildRequires:	automake autoconf libtool
-BuildRequires:	dump gnuplot cups samba-client tar grep
-BuildRequires:	gcc-c++ readline-devel
+BuildRequires:	dump gnuplot cups samba-client
 BuildRequires:	krb5-devel netkit-rsh openssh-clients ncompress mtx mt-st
 BuildRequires:	perl-devel perl(ExtUtils::Embed) perl(Test::Simple)
-BuildRequires:	glib2-devel openssl-devel swig bison flex
-BuildRequires:	libcurl-devel
+BuildRequires:	pkgconfig(glib-2.0) pkgconfig(openssl) swig bison flex
+BuildRequires:	pkgconfig(libcurl) readline-devel
 Requires(pre):	shadow-utils
 Requires:	xinetd
 %rename		amanda-devel
