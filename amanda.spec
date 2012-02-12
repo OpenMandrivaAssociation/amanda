@@ -5,8 +5,8 @@
 %define amanda_group disk
 Summary:	A network-capable tape backup solution
 Name:		amanda
-Version:	3.2.3
-Release:	4
+Version:	3.3.0
+Release:	1
 Source0:	http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
 Source1:	amanda.crontab
 Source4:	disklist
