@@ -332,8 +332,8 @@ make check
 %{perl_vendorarch}/Amanda/Holding.pm
 %{perl_vendorarch}/Amanda/Changer/
 %{perl_vendorarch}/Amanda/Changer.pm
-%{perl_vendorarch}/Amanda/Interactive/
-%{perl_vendorarch}/Amanda/Interactive.pm
+%{perl_vendorarch}/Amanda/Interactivity/
+%{perl_vendorarch}/Amanda/Interactivity.pm
 %{perl_vendorarch}/Amanda/Logfile.pm
 %{perl_vendorarch}/Amanda/Recovery/
 %{perl_vendorarch}/Amanda/Report/
