@@ -99,7 +99,6 @@ export CONFIGURE_XPATH=""
 	--enable-shared \
 	--disable-rpath \
 	--disable-static \
-	--disable-dependency-tracking \
 	--disable-installperms \
 	--program-prefix=%{?_program_prefix} \
 	--with-amdatadir=%{_localstatedir}/lib/amanda \
