@@ -111,9 +111,9 @@ export CONFIGURE_XPATH=""
 	--with-smbclient=%{_bindir}/smbclient \
 	--with-amandates=%{_localstatedir}/lib/amanda/amandates \
 	--with-amandahosts \
-	--with-user=%amanda_user \
-	--with-group=%amanda_group \
-	--with-tmpdir=/var/log/amanda \
+	--with-user=%{amanda_user} \
+	--with-group=%{amanda_group} \
+	--with-tmpdir=%{_var}/log/amanda \
 	--with-gnutar=/bin/tar \
 	--with-ssh-security \
 	--with-rsh-security \
@@ -149,19 +149,19 @@ rm -rf %{buildroot}%{_datadir}/amanda
 make check
 
 %pre
-/usr/sbin/useradd -M -N -g %amanda_group -o -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
-	-c "Amanda user" -u 33 %amanda_user >/dev/null 2>&1 || :
-/usr/bin/gpasswd -a %amanda_user tape >/dev/null 2>&1 || :
+/usr/sbin/useradd -M -N -g %{amanda_group} -o -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
+	-c "Amanda user" -u 33 %{amanda_user} >/dev/null 2>&1 || :
+/usr/bin/gpasswd -a %{amanda_user} tape >/dev/null 2>&1 || :
 
 %post
-[ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
+[ -f %{_var}/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
 
 %postun
-[ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
+[ -f %{_var}/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
 
 %files
 %doc COPYRIGHT* NEWS README
-%config(noreplace) /etc/xinetd.d/amanda
+%config(noreplace) %{_sysconfdir}/xinetd.d/amanda
 
 %{_libdir}/libamanda-*.so
 %{_libdir}/libamanda.so
@@ -245,9 +245,9 @@ make check
 %dir %{_sysconfdir}/amanda/
 %dir %{_sysconfdir}/amanda/%{defconfig}
 
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/
-%attr(600,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
-%attr(02700,%amanda_user,%amanda_group) %dir /var/log/amanda
+%attr(-,%{amanda_user},%{amanda_group}) %dir %{_localstatedir}/lib/amanda/
+%attr(600,%{amanda_user},%{amanda_group}) %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
+%attr(02700,%{amanda_user},%{amanda_group}) %dir %{_var}/log/amanda
 
 %files server
 %{_libdir}/libamdevice*.so
@@ -260,14 +260,14 @@ make check
 %{_libexecdir}/amanda/amtrmidx
 %{_libexecdir}/amanda/amtrmlog
 %{_libexecdir}/amanda/driver
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/dumper
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/dumper
 %{_libexecdir}/amanda/chg-disk
 %{_libexecdir}/amanda/chg-lib.sh
 %{_libexecdir}/amanda/chg-manual
 %{_libexecdir}/amanda/chg-multi
 %{_libexecdir}/amanda/chg-zd-mtx
 %{_libexecdir}/amanda/chunker
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/planner
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/planner
 %{_libexecdir}/amanda/taper
 %{_sbindir}/activate-devpay
 %{_sbindir}/amaddclient
@@ -277,7 +277,7 @@ make check
 %{_sbindir}/amdump
 %{_sbindir}/amfetchdump
 %{_sbindir}/amflush
-%attr(4750,root,%amanda_group) %{_sbindir}/amcheck
+%attr(4750,root,%{amanda_group}) %{_sbindir}/amcheck
 %{_sbindir}/amcheckdb
 %{_sbindir}/amcheckdump
 %{_sbindir}/amlabel
@@ -286,7 +286,7 @@ make check
 %{_sbindir}/amrestore
 %{_sbindir}/amrmtape
 %{_sbindir}/amserverconfig
-%attr(4750,root,%amanda_group) %{_sbindir}/amservice
+%attr(4750,root,%{amanda_group}) %{_sbindir}/amservice
 %{_sbindir}/amstatus
 %{_sbindir}/amtape
 %{_sbindir}/amtapetype
@@ -351,17 +351,17 @@ make check
 %exclude %{_sysconfdir}/amanda/%{defconfig}/amanda-client.conf
 %exclude %{_sysconfdir}/amanda/%{defconfig}/amanda-client-postgresql.conf
 
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%{defconfig}/
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%{defconfig}/index
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/template.d
-%attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
+%attr(-,%{amanda_user},%{amanda_group}) %dir %{_localstatedir}/lib/amanda/%{defconfig}/
+%attr(-,%{amanda_user},%{amanda_group}) %dir %{_localstatedir}/lib/amanda/%{defconfig}/index
+%attr(-,%{amanda_user},%{amanda_group}) %dir %{_localstatedir}/lib/amanda/template.d
+%attr(-,%{amanda_user},%{amanda_group}) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
 
 %files client
 %{_libdir}/libamclient*.so
 
 %dir %{_libexecdir}/amanda/application/
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/application/amgtar
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/application/amstar
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/application/amgtar
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/application/amstar
 %{_libexecdir}/amanda/application/amlog-script
 %{_libexecdir}/amanda/application/ampgsql
 %{_libexecdir}/amanda/application/amraw
@@ -371,12 +371,12 @@ make check
 %{_libexecdir}/amanda/application/amzfs-snapshot
 %{_libexecdir}/amanda/application/script-email
 
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/calcsize
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/killpgrp
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/calcsize
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/killpgrp
 %{_libexecdir}/amanda/noop
 %{_libexecdir}/amanda/patch-system
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/rundump
-%attr(4750,root,%amanda_group) %{_libexecdir}/amanda/runtar
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/rundump
+%attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/runtar
 %{_libexecdir}/amanda/selfcheck
 %{_libexecdir}/amanda/sendbackup
 %{_libexecdir}/amanda/sendsize
@@ -404,5 +404,5 @@ make check
 %config(noreplace) %{_sysconfdir}/amanda/%{defconfig}/amanda-client.conf
 %config(noreplace) %{_sysconfdir}/amanda/%{defconfig}/amanda-client-postgresql.conf
 
-%attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/amandates
-%attr(-,%amanda_user,%amanda_group) %{_localstatedir}/lib/amanda/gnutar-lists/
+%attr(-,%{amanda_user},%{amanda_group}) %config(noreplace) %{_localstatedir}/lib/amanda/amandates
+%attr(-,%{amanda_user},%{amanda_group}) %{_localstatedir}/lib/amanda/gnutar-lists/
