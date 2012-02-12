@@ -121,32 +121,26 @@ export CONFIGURE_XPATH=""
 %make
 
 %install
-%makinstall_std BINARY_OWNER=%(id -un) SETUID_GROUP=%(id -gn)
+%makeinstall_std BINARY_OWNER=%(id -un) SETUID_GROUP=%(id -gn)
 
-mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
-cp %SOURCE5 $RPM_BUILD_ROOT/etc/xinetd.d/amanda
-chmod 644 $RPM_BUILD_ROOT/etc/xinetd.d/amanda
-mkdir -p $RPM_BUILD_ROOT/var/log/amanda
-mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/amanda
-install -m 600 %SOURCE8 $RPM_BUILD_ROOT%{_localstatedir}/lib/amanda/.amandahosts
+install -m644 %{SOURCE5} -D %{buildroot}%{_sysconfdir}/xinetd.d/amanda
+mkdir -p %{buildroot}%{_var}/log/amanda
+install -m600 %{SOURCE8} -D %{buildroot}%{_localstatedir}/lib/amanda/.amandahosts
 
-ln -s %{_libexecdir}/amanda/amandad $RPM_BUILD_ROOT%{_sbindir}/amandad
+ln -s %{_libexecdir}/amanda/amandad %{buildroot}%{_sbindir}/amandad
 #ln -s amrecover.8.gz $RPM_BUILD_ROOT%{_mandir}/man8/amoldrecover.8
 
-pushd ${RPM_BUILD_ROOT}
-  mv .%{_sysconfdir}/amanda/example .%{_sysconfdir}/amanda/%defconfig
-  cp ${RPM_SOURCE_DIR}/amanda.crontab .%{_sysconfdir}/amanda/crontab.sample
-  cp ${RPM_SOURCE_DIR}/disklist .%{_sysconfdir}/amanda/%defconfig
-  cp ${RPM_SOURCE_DIR}/disklist .%{_sysconfdir}/amanda/%defconfig
-  rm -f .%{_sysconfdir}/amanda/%defconfig/xinetd*
-  rm -f .%{_sysconfdir}/amanda/%defconfig/inetd*
+mv %{buildroot}%{_sysconfdir}/amanda/example %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
+install -m644 %{SOURCE1} -D %{buildroot}%{_sysconfdir}/amanda/crontab.sample
+install -m644 %{SOURCE4} -D %{buildroot}%{_sysconfdir}/amanda/%{defconfig}
+rm -f %{buildroot}%{_sysconfdir}/amanda/%{defconfig}/xinetd*
+rm -f %{buildroot}%{_sysconfdir}/amanda/%{defconfig}/inetd*
 
-  mkdir -p .%{_localstatedir}/lib/amanda/gnutar-lists
-  mkdir -p .%{_localstatedir}/lib/amanda/%defconfig/index
-  touch .%{_localstatedir}/lib/amanda/amandates
-popd
-rm -rf $RPM_BUILD_ROOT/usr/share/amanda
-find $RPM_BUILD_ROOT -name \*.la | xargs rm
+mkdir -p %{buildroot}%{_localstatedir}/lib/amanda/gnutar-lists
+mkdir -p %{buildroot}%{_localstatedir}/lib/amanda/%{defconfig}/index
+touch %{buildroot}%{_localstatedir}/lib/amanda/amandates
+
+rm -rf %{buildroot}%{_datadir}/amanda
 
 %check
 make check
@@ -246,7 +240,7 @@ make check
 %{_mandir}/man8/amgetconf.8*
 
 %dir %{_sysconfdir}/amanda/
-%dir %{_sysconfdir}/amanda/%defconfig
+%dir %{_sysconfdir}/amanda/%{defconfig}
 
 %attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/
 %attr(600,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/.amandahosts
@@ -350,12 +344,12 @@ make check
 %{perl_vendorarch}/auto/Amanda/XferServer/
 
 %config(noreplace) %{_sysconfdir}/amanda/crontab.sample
-%config(noreplace) %{_sysconfdir}/amanda/%defconfig/*
-%exclude %{_sysconfdir}/amanda/%defconfig/amanda-client.conf
-%exclude %{_sysconfdir}/amanda/%defconfig/amanda-client-postgresql.conf
+%config(noreplace) %{_sysconfdir}/amanda/%{defconfig}/*
+%exclude %{_sysconfdir}/amanda/%{defconfig}/amanda-client.conf
+%exclude %{_sysconfdir}/amanda/%{defconfig}/amanda-client-postgresql.conf
 
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%defconfig/
-%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%defconfig/index
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%{defconfig}/
+%attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/%{defconfig}/index
 %attr(-,%amanda_user,%amanda_group) %dir %{_localstatedir}/lib/amanda/template.d
 %attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
 
@@ -404,8 +398,8 @@ make check
 %{perl_vendorarch}/Amanda/Application/
 %{perl_vendorarch}/auto/Amanda/Application/
 
-%config(noreplace) %{_sysconfdir}/amanda/%defconfig/amanda-client.conf
-%config(noreplace) %{_sysconfdir}/amanda/%defconfig/amanda-client-postgresql.conf
+%config(noreplace) %{_sysconfdir}/amanda/%{defconfig}/amanda-client.conf
+%config(noreplace) %{_sysconfdir}/amanda/%{defconfig}/amanda-client-postgresql.conf
 
 %attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/amandates
 %attr(-,%amanda_user,%amanda_group) %{_localstatedir}/lib/amanda/gnutar-lists/
