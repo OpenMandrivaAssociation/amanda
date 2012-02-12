@@ -34,8 +34,7 @@ BuildRequires:	perl-devel perl(ExtUtils::Embed) perl(Test::Simple)
 BuildRequires:	glib2-devel openssl-devel swig bison flex
 BuildRequires:	libcurl-devel
 Requires(pre):	shadow-utils
-Requires(post):	grep sed
-Requires:	grep initscripts tar /bin/mail xinetd
+Requires:	xinetd
 %rename		amanda-devel
 
 %define _provides_exceptions perl(Math::BigInt)
@@ -56,8 +55,7 @@ well.
 %package	client
 Summary:	The client component of the AMANDA tape backup system
 Group:		Archiving/Backup
-Requires:	grep /sbin/service
-Requires(pre):	amanda = %{version}-%{release}
+Requires:	amanda = %{EVRD}
 
 %description	client
 The Amanda-client package should be installed on any machine that will
@@ -68,8 +66,7 @@ AMANDA client machine.
 %package	server
 Summary:	The server side of the AMANDA tape backup system
 Group:		Archiving/Backup
-Requires:	grep /sbin/service
-Requires(pre):	amanda = %{version}-%{release}
+Requires:	amanda = %{EVRD}
 
 %description server
 The amanda-server package should be installed on the AMANDA server,
