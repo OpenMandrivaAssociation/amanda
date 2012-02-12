@@ -21,6 +21,7 @@ Patch7:		amanda-3.3.0-drop-conflicting-g_queue_free_full.patch
 Patch8:		amanda-3.3.0-qw.patch
 Patch9:		amanda-3.3.0-match_disk.patch
 Patch10:	amanda-3.3.0-g_thread-deprecated.patch
+Patch11:	amanda-3.3.0-kerberos5-deprecated.patch
 License:	BSD
 Group:		Archiving/Backup
 URL:		http://www.amanda.org
@@ -160,6 +161,7 @@ Amanda libamclient library.
 %patch8 -p3 -b .qw~
 %patch9 -p3 -b .match_disk~
 %patch10 -p1 -b .gthread_deprecated~
+%patch11 -p1 -b .krb5_deprecated~
 ./autogen
 
 %build
