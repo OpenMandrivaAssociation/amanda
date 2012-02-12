@@ -153,9 +153,9 @@ Amanda libamclient library.
 
 %prep
 %setup -q
-%patch2 -p1 -b .xattrs
-%patch3 -p1 -b .tcpport
-%patch6 -p1 -b .config
+%patch2 -p1 -b .xattrs~
+%patch3 -p1 -b .tcpport~
+%patch6 -p1 -b .config~
 %patch7 -p1 -b .g_queue_free_full~
 %patch8 -p3 -b .qw~
 %patch9 -p3 -b .match_disk~
