@@ -136,6 +136,30 @@ Group:		System/Libraries
 %description -n	%{libndmlib}
 Amanda libndmlib library.
 
+%define libamdevice %mklibname amdevice %{version}
+%package -n	%{libamdevice}
+Summary:	Amanda libamdevice library
+Group:		System/Libraries
+
+%description -n	%{libamdevice}
+Amanda libamdevice library.
+
+%define libamserver %mklibname amserver %{version}
+%package -n	%{libamserver}
+Summary:	Amanda libamserver library
+Group:		System/Libraries
+
+%description -n	%{libamserver}
+Amanda libamserver library.
+
+%define libamclient %mklibname amclient %{version}
+%package -n	%{libamclient}
+Summary:	Amanda libamclient library
+Group:		System/Libraries
+
+%description -n	%{libamclient}
+Amanda libamclient library.
+
 %prep
 %setup -q
 %patch1 -p1 -b .example
@@ -153,7 +177,7 @@ Amanda libndmlib library.
 %serverbuild
 export MAILER=/bin/mail
 export CONFIGURE_XPATH=""
-%configure2_5x  \
+%configure2_5x \
 	--enable-shared \
 	--disable-rpath \
 	--disable-static \
@@ -245,6 +269,18 @@ make check
 %{_libdir}/libndmlib-%{version}.so
 %{_libdir}/libndmlib.so
 
+%files -n %{libamdevice}
+%{_libdir}/libamdevice-%{version}.so
+%{_libdir}/libamdevice.so
+
+%files -n %{libamserver}
+%{_libdir}/libamserver-%{version}.so
+%{_libdir}/libamserver.so
+
+%files -n %{libamclient}
+%{_libdir}/libamclient-%{version}.so
+%{_libdir}/libamclient.so
+
 %files
 %doc COPYRIGHT* NEWS README
 %config(noreplace) %{_sysconfdir}/xinetd.d/amanda
@@ -327,8 +363,6 @@ make check
 %attr(02700,%{amanda_user},%{amanda_group}) %dir %{_var}/log/amanda
 
 %files server
-%{_libdir}/libamdevice*.so
-%{_libdir}/libamserver*.so
 %{_libexecdir}/amanda/amcleanupdisk
 %{_libexecdir}/amanda/amdumpd
 %{_libexecdir}/amanda/amcheck-device
@@ -437,8 +471,6 @@ make check
 %attr(-,%{amanda_user},%{amanda_group}) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
 
 %files client
-%{_libdir}/libamclient*.so
-
 %dir %{_libexecdir}/amanda/application/
 %attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/application/amgtar
 %attr(4750,root,%{amanda_group}) %{_libexecdir}/amanda/application/amstar
