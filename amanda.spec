@@ -1,40 +1,38 @@
-%define _libexecdir %{_libdir}
 %define defconfig DailySet1
 %define indexserver amandahost
 %define tapeserver %{indexserver}
 %define amanda_user amandabackup
 %define amanda_group disk
-Summary: A network-capable tape backup solution
-Name: amanda
-Version: 3.2.3
+Summary:	A network-capable tape backup solution
+Name:		amanda
+Version:	3.2.3
 Release:	4
-Source: http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
-Source1: amanda.crontab
-Source4: disklist
-Source5: amanda-xinetd
-Source8: amandahosts
-Patch1: amanda-3.1.0-example.patch
-Patch2: amanda-3.1.1-xattrs.patch
-Patch3: amanda-3.1.1-tcpport.patch
-Patch5: amanda-3.1.1-bsd.patch
-Patch6: amanda-3.2.0-config-dir.patch
-License: BSD
-Group: Archiving/Backup
-URL: http://www.amanda.org
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: automake autoconf libtool
-BuildRequires: dump gnuplot cups samba-client tar grep
-BuildRequires: gcc-c++ readline-devel
-BuildRequires: krb5-devel netkit-rsh openssh-clients ncompress mtx mt-st
-BuildRequires: perl-devel perl(ExtUtils::Embed) perl(Test::Simple)
-BuildRequires: glib2-devel openssl-devel swig bison flex
-BuildRequires: libcurl-devel
-Requires(pre): shadow-utils
-Requires(post): grep sed
-Requires: grep initscripts tar /bin/mail xinetd
+Source0:	http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
+Source1:	amanda.crontab
+Source4:	disklist
+Source5:	amanda-xinetd
+Source8:	amandahosts
+Patch1:		amanda-3.1.0-example.patch
+Patch2:		amanda-3.1.1-xattrs.patch
+Patch3:		amanda-3.1.1-tcpport.patch
+Patch5:		amanda-3.1.1-bsd.patch
+Patch6:		amanda-3.2.0-config-dir.patch
+License:	BSD
+Group:		Archiving/Backup
+URL:		http://www.amanda.org
+BuildRequires:	automake autoconf libtool
+BuildRequires:	dump gnuplot cups samba-client tar grep
+BuildRequires:	gcc-c++ readline-devel
+BuildRequires:	krb5-devel netkit-rsh openssh-clients ncompress mtx mt-st
+BuildRequires:	perl-devel perl(ExtUtils::Embed) perl(Test::Simple)
+BuildRequires:	glib2-devel openssl-devel swig bison flex
+BuildRequires:	libcurl-devel
+Requires(pre):	shadow-utils
+Requires(post):	grep sed
+Requires:	grep initscripts tar /bin/mail xinetd
 #Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-Obsoletes: amanda-devel < 2.6.1p2-5
-Provides: amanda-devel = 2.6.1p2-5
+Obsoletes:	amanda-devel < 2.6.1p2-5
+Provides:	amanda-devel = 2.6.1p2-5
 
 %global __perl_provides /bin/sh -c "/usr/lib/rpm/perl.prov | grep -v \\\"perl(Math::BigInt)\\\""
 
@@ -51,23 +49,23 @@ be installed on both AMANDA clients and AMANDA servers.  Note that you
 will have to install the amanda-client and/or amanda-server packages as
 well.
 
-%package client
-Summary: The client component of the AMANDA tape backup system
-Group: Archiving/Backup
-Requires: grep /sbin/service
-Requires(pre): amanda = %{version}-%{release}
+%package	client
+Summary:	The client component of the AMANDA tape backup system
+Group:		Archiving/Backup
+Requires:	grep /sbin/service
+Requires(pre):	amanda = %{version}-%{release}
 
-%description client
+%description	client
 The Amanda-client package should be installed on any machine that will
 be backed up by AMANDA (including the server if it also needs to be
 backed up).  You will also need to install the amanda package on each
 AMANDA client machine.
 
-%package server
-Summary: The server side of the AMANDA tape backup system
-Group: Archiving/Backup
-Requires: grep /sbin/service
-Requires(pre): amanda = %{version}-%{release}
+%package	server
+Summary:	The server side of the AMANDA tape backup system
+Group:		Archiving/Backup
+Requires:	grep /sbin/service
+Requires(pre):	amanda = %{version}-%{release}
 
 %description server
 The amanda-server package should be installed on the AMANDA server,
@@ -77,7 +75,7 @@ the AMANDA server machine.  And, if the server is also to be backed up, the
 server also needs to have the amanda-client package installed.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 %patch1 -p1 -b .example
 %patch2 -p1 -b .xattrs
 %patch3 -p1 -b .tcpport
@@ -86,25 +84,16 @@ server also needs to have the amanda-client package installed.
 ./autogen
 
 %build
-export MAILER=/bin/mail CFLAGS="$RPM_OPT_FLAGS -fPIE" LDFLAGS=-pie
+%serverbuild
+export MAILER=/bin/mail
 export CONFIGURE_XPATH=""
-./configure --enable-shared \
+%configure2_5x  \
+	--enable-shared \
 	--disable-rpath \
 	--disable-static \
 	--disable-dependency-tracking \
 	--disable-installperms \
 	--program-prefix=%{?_program_prefix} \
-	--prefix=%{_prefix} \
-	--exec-prefix=%{_exec_prefix} \
-	--bindir=%{_bindir} \
-	--sbindir=%{_sbindir} \
-	--sysconfdir=%{_sysconfdir} \
-	--datadir=%{_datadir} \
-	--libdir=%{_libdir} \
-	--libexecdir=%{_libexecdir} \
-	--mandir=%{_mandir} \
-	--infodir=%{_infodir} \
-	--sharedstatedir=%{_sharedstatedir} \
 	--with-amdatadir=%{_localstatedir}/lib/amanda \
 	--with-amlibdir=%{_libdir} \
 	--with-amperldir=%{perl_vendorarch} \
@@ -125,13 +114,10 @@ export CONFIGURE_XPATH=""
 	--with-bsdudp-security \
 	--with-krb5-security
 
-make  %{?_smp_mflags}
-
+%make
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
-
-make install BINARY_OWNER=%(id -un) SETUID_GROUP=%(id -gn) DESTDIR=$RPM_BUILD_ROOT
+%makinstall_std BINARY_OWNER=%(id -un) SETUID_GROUP=%(id -gn)
 
 mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
 cp %SOURCE5 $RPM_BUILD_ROOT/etc/xinetd.d/amanda
@@ -161,32 +147,18 @@ find $RPM_BUILD_ROOT -name \*.la | xargs rm
 %check
 make check
 
-%clean 
-rm -rf ${RPM_BUILD_ROOT}
-
 %pre
 /usr/sbin/useradd -M -N -g %amanda_group -o -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
 	-c "Amanda user" -u 33 %amanda_user >/dev/null 2>&1 || :
 /usr/bin/gpasswd -a %amanda_user tape >/dev/null 2>&1 || :
 
 %post
-/sbin/ldconfig
 [ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
 
 %postun
-/sbin/ldconfig
 [ -f /var/lock/subsys/xinetd ] && /sbin/service xinetd reload > /dev/null 2>&1 || :
 
-%post client -p /sbin/ldconfig
-
-%post server -p /sbin/ldconfig
-
-%postun client -p /sbin/ldconfig
-
-%postun server -p /sbin/ldconfig
-
 %files
-%defattr(-,root,root)
 %doc COPYRIGHT* NEWS README
 %config(noreplace) /etc/xinetd.d/amanda
 
@@ -277,7 +249,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(02700,%amanda_user,%amanda_group) %dir /var/log/amanda
 
 %files server
-%defattr(-,root,root)
 %{_libdir}/libamdevice*.so
 %{_libdir}/libamserver*.so
 %{_libexecdir}/amanda/amcleanupdisk
@@ -385,7 +356,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(-,%amanda_user,%amanda_group) %config(noreplace) %{_localstatedir}/lib/amanda/template.d/*
 
 %files client
-%defattr(-,root,root)
 %{_libdir}/libamclient*.so
 
 %dir %{_libexecdir}/amanda/application/
