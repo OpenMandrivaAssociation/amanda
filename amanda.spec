@@ -7,7 +7,7 @@
 
 Summary:	A network-capable tape backup solution
 Name:		amanda
-Version:	3.3.0
+Version:	3.3.1
 Release:	1
 Source0:	http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
 Source1:	amanda.crontab
@@ -18,9 +18,6 @@ Patch2:		amanda-3.1.1-xattrs.patch
 Patch3:		amanda-3.1.1-tcpport.patch
 Patch6:		amanda-3.2.0-config-dir.patch
 Patch7:		amanda-3.3.0-drop-conflicting-g_queue_free_full.patch
-Patch8:		amanda-3.3.0-qw.patch
-Patch9:		amanda-3.3.0-match_disk.patch
-Patch10:	amanda-3.3.0-g_thread-deprecated.patch
 Patch11:	amanda-3.3.0-kerberos5-deprecated.patch
 License:	BSD
 Group:		Archiving/Backup
@@ -158,9 +155,6 @@ Amanda libamclient library.
 %patch3 -p1 -b .tcpport~
 %patch6 -p1 -b .config~
 %patch7 -p1 -b .g_queue_free_full~
-%patch8 -p3 -b .qw~
-%patch9 -p3 -b .match_disk~
-%patch10 -p1 -b .gthread_deprecated~
 %patch11 -p1 -b .krb5_deprecated~
 ./autogen
 
@@ -217,9 +211,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/amanda/%{defconfig}/index
 touch %{buildroot}%{_localstatedir}/lib/amanda/amandates
 
 rm -rf %{buildroot}%{_datadir}/amanda
-
-%check
-make check
 
 %pre
 /usr/sbin/useradd -M -N -g %{amanda_group} -o -r -d %{_localstatedir}/lib/amanda -s /bin/bash \
