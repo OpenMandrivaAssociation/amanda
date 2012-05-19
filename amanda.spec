@@ -345,7 +345,6 @@ rm -rf %{buildroot}%{_datadir}/amanda
 %attr(02700,%{amanda_user},%{amanda_group}) %dir %{_var}/log/amanda
 
 %files server
-%{_libexecdir}/amanda/amcleanupdisk
 %{_libexecdir}/amanda/amdumpd
 %{_libexecdir}/amanda/amcheck-device
 %{_libexecdir}/amanda/amidxtaped
@@ -365,6 +364,7 @@ rm -rf %{buildroot}%{_datadir}/amanda
 %{_libexecdir}/amanda/taper
 %{_sbindir}/activate-devpay
 %{_sbindir}/amaddclient
+%{_sbindir}/amcleanupdisk
 %{_sbindir}/amadmin
 %{_sbindir}/amcleanup
 %{_sbindir}/amdevcheck
@@ -394,6 +394,7 @@ rm -rf %{buildroot}%{_datadir}/amanda
 %{_mandir}/man7/amanda-interactivity.7*
 %{_mandir}/man7/amanda-taperscan.7*
 %{_mandir}/man8/amaddclient.8*
+%{_mandir}/man8/amcleanupdisk.8.*
 %{_mandir}/man8/amadmin.8*
 %{_mandir}/man8/amcleanup.8*
 %{_mandir}/man8/amdevcheck.8*
