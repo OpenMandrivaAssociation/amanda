@@ -1,0 +1,50 @@
+--- amanda-3.3.0/common-src/krb5-security.c.krb5_deprecated~	2012-02-12 12:29:43.532528604 +0100
++++ amanda-3.3.0/common-src/krb5-security.c	2012-02-12 12:40:51.748223490 +0100
+@@ -786,13 +786,14 @@ get_tgt(
+     krb5_creds creds;
+     krb5_keytab keytab;
+     krb5_ccache ccache;
+-    krb5_timestamp now;
++    krb5_get_init_creds_opt opt;
+ #ifdef KRB5_HEIMDAL_INCLUDES
+     krb5_data tgtname = { KRB5_TGS_NAME_SIZE, KRB5_TGS_NAME };
+ #else
+     krb5_data tgtname = { 0, KRB5_TGS_NAME_SIZE, KRB5_TGS_NAME };
+ #endif
+     static char *error = NULL;
++    char *service = NULL;
+ 
+     if (error != NULL) {
+ 	amfree(error);
+@@ -859,24 +860,20 @@ get_tgt(
+ 	return (error);
+     }
+ 
+-    ret = krb5_timeofday(context, &now);
++    memset(&creds, 0, SIZEOF(creds));
++    krb5_get_init_creds_opt_init(&opt);
++    ret = krb5_unparse_name(context, server, &service);
+     if (ret != 0) {
+-	error = vstrallocf(_("error getting time of day: %s"), error_message(ret));
++	error = vstrallocf(_("error unparsing name: %s"), error_message(ret));
+ 	return (error);
+     }
+ 
+-    memset(&creds, 0, SIZEOF(creds));
+-    creds.times.starttime = 0;
+-    creds.times.endtime = now + AMANDA_TKT_LIFETIME;
+-
+-    creds.client = client;
+-    creds.server = server;
+-
+     /*
+      * Get a ticket for the service, using the keytab
+      */
+-    ret = krb5_get_in_tkt_with_keytab(context, 0, NULL, NULL, NULL,
+-	keytab, 0, &creds, 0);
++    ret = krb5_get_init_creds_keytab(context, &creds, client, keytab, 0,
++	    service, &opt);
++    free(service);
+ 
+     if (ret != 0) {
+ 	error = vstrallocf(_("error getting ticket for %s: %s"),

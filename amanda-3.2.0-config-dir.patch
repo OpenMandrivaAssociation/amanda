@@ -1,0 +1,19 @@
+diff --git a/example/amanda.conf.in b/example/amanda.conf.in
+index 5c6ced7..721d683 100644
+--- a/example/amanda.conf.in
++++ b/example/amanda.conf.in
+@@ -225,10 +225,10 @@ holdingdisk hd1 {
+ # Note that, although the keyword below is infofile, it is only so for
+ # historic reasons, since now it is supposed to be a directory (unless
+ # you have selected some database format other than the `text' default)
+-infofile "@CONFIG_DIR@/@DEFAULT_CONFIG@/curinfo"	# database DIRECTORY
+-logdir   "@CONFIG_DIR@/@DEFAULT_CONFIG@"		# log directory
+-indexdir "@CONFIG_DIR@/@DEFAULT_CONFIG@/index"		# index directory
+-#tapelist "@CONFIG_DIR@/@DEFAULT_CONFIG@/tapelist"	# list of used tapes
++infofile "/var/lib/amanda/@DEFAULT_CONFIG@/curinfo"	# database DIRECTORY
++logdir   "/var/lib/amanda/@DEFAULT_CONFIG@"		# log directory
++indexdir "/var/lib/amanda/@DEFAULT_CONFIG@/index"	# index directory
++tapelist "/var/lib/amanda/@DEFAULT_CONFIG@/tapelist"	# list of used tapes
+ # tapelist is stored, by default, in the directory that contains amanda.conf
+ 
+ # tapetypes

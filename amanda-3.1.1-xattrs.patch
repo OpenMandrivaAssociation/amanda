@@ -1,0 +1,55 @@
+diff -up amanda-3.1.1/example/amanda.conf.in.xattrs amanda-3.1.1/example/amanda.conf.in
+--- amanda-3.1.1/example/amanda.conf.in.xattrs	2010-08-03 14:45:25.000000000 +0200
++++ amanda-3.1.1/example/amanda.conf.in	2010-08-03 14:47:42.516753010 +0200
+@@ -718,6 +718,7 @@ define interface local {
+ define application-tool app_amgtar {
+     comment "amgtar"
+     plugin  "amgtar"
++    property "XATTRS" "YES"
+     #property "GNUTAR-PATH" "/path/to/gtar"
+     #property "GNUTAR-LISTDIR" "/path/to/gnutar_list_dir"
+                     #default from gnutar_list_dir setting in amanda-client.conf
+diff -up amanda-3.1.1/example/template.d/amanda-harddisk.conf.in.xattrs amanda-3.1.1/example/template.d/amanda-harddisk.conf.in
+--- amanda-3.1.1/example/template.d/amanda-harddisk.conf.in.xattrs	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/template.d/amanda-harddisk.conf.in	2010-08-03 14:47:17.027752940 +0200
+@@ -30,6 +30,7 @@ define dumptype global {
+ define application-tool app_amgtar {
+     comment "amgtar"
+     plugin  "amgtar"
++    property "XATTRS" "YES"
+     #property "GNUTAR-PATH" "/path/to/gtar"
+     #property "GNUTAR-LISTDIR" "/path/to/gnutar_list_dir"
+ }
+diff -up amanda-3.1.1/example/template.d/amanda-single-tape.conf.in.xattrs amanda-3.1.1/example/template.d/amanda-single-tape.conf.in
+--- amanda-3.1.1/example/template.d/amanda-single-tape.conf.in.xattrs	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/template.d/amanda-single-tape.conf.in	2010-08-03 14:47:21.307753002 +0200
+@@ -37,6 +37,7 @@ define dumptype global {
+ define application-tool app_amgtar {
+     comment "amgtar"
+     plugin  "amgtar"
++    property "XATTRS" "YES"
+     #property "GNUTAR-PATH" "/path/to/gtar"
+     #property "GNUTAR-LISTDIR" "/path/to/gnutar_list_dir"
+ }
+diff -up amanda-3.1.1/example/template.d/amanda-S3.conf.in.xattrs amanda-3.1.1/example/template.d/amanda-S3.conf.in
+--- amanda-3.1.1/example/template.d/amanda-S3.conf.in.xattrs	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/template.d/amanda-S3.conf.in	2010-08-03 14:47:26.723752659 +0200
+@@ -38,6 +38,7 @@ define dumptype global {
+ define application-tool app_amgtar {
+     comment "amgtar"
+     plugin  "amgtar"
++    property "XATTRS" "YES"
+     #property "GNUTAR-PATH" "/path/to/gtar"
+     #property "GNUTAR-LISTDIR" "/path/to/gnutar_list_dir"
+ }
+diff -up amanda-3.1.1/example/template.d/amanda-tape-changer.conf.in.xattrs amanda-3.1.1/example/template.d/amanda-tape-changer.conf.in
+--- amanda-3.1.1/example/template.d/amanda-tape-changer.conf.in.xattrs	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/template.d/amanda-tape-changer.conf.in	2010-08-03 14:47:30.827752997 +0200
+@@ -37,6 +37,7 @@ define dumptype global {
+ define application-tool app_amgtar {
+     comment "amgtar"
+     plugin  "amgtar"
++    property "XATTRS" "YES"
+     #property "GNUTAR-PATH" "/path/to/gtar"
+     #property "GNUTAR-LISTDIR" "/path/to/gnutar_list_dir"
+ }

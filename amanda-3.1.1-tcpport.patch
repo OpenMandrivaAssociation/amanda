@@ -1,0 +1,29 @@
+diff -up amanda-3.1.1/example/amanda-client.conf.in.tcpport amanda-3.1.1/example/amanda-client.conf.in
+--- amanda-3.1.1/example/amanda-client.conf.in.tcpport	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/amanda-client.conf.in	2010-08-10 14:44:32.372879810 +0200
+@@ -22,3 +22,5 @@ auth "bsdtcp"
+ 
+ ssh_keys ""			# your ssh keys file if you use ssh auth
+ 
++#resolves "resource temporarily unavailable" bug
++unreserved-tcp-port 1025,65535
+diff -up amanda-3.1.1/example/amanda-client-postgresql.conf.in.tcpport amanda-3.1.1/example/amanda-client-postgresql.conf.in
+--- amanda-3.1.1/example/amanda-client-postgresql.conf.in.tcpport	2010-06-29 19:09:55.000000000 +0200
++++ amanda-3.1.1/example/amanda-client-postgresql.conf.in	2010-08-10 14:44:41.423755630 +0200
+@@ -44,3 +44,6 @@ property "foo-PG-DATADIR" "/var/postgres
+ #   For this example:
+ #   archive_command = 'test ! -f /var/postgresql/archive/%f && cp %p /var/postgresql/archive/%f'
+ property "foo-PG-ARCHIVEDIR" "/var/postgresql/archive"
++
++#resolves "resource temporarily unavailable" bug
++unreserved-tcp-port 1025,65535
+diff -up amanda-3.1.1/example/amanda.conf.in.tcpport amanda-3.1.1/example/amanda.conf.in
+--- amanda-3.1.1/example/amanda.conf.in.tcpport	2010-08-10 14:43:55.640754722 +0200
++++ amanda-3.1.1/example/amanda.conf.in	2010-08-10 14:44:50.760880089 +0200
+@@ -761,3 +761,6 @@ define script-tool sc-email {
+ # configurations.
+ 
+ #includefile "@CONFIG_DIR@/amanda.conf.main"
++
++#resolves "resource temporarily unavailable" bug
++unreserved-tcp-port 1025,65535
