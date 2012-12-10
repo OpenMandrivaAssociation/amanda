@@ -1,6 +1,2 @@
 sources:
-  "amanda-3.3.1.tar.gz:"	22273381f61319e46e1da9d7029ca2b3991eee98
-  "amanda.crontab:"	81990cb52ebe135288eb5d396314f76146df7cd2
-  "amandahosts:"	d5446b716c6e0a2ec9a05eddd7abb687ece4d2e5
-  "amanda-xinetd:"	efa3633c51aa64621b54f2128cb054f69c73736e
-  "disklist:"	cb501fe04b766bedf548ce66ff4d579f29834364
+  "amanda-3.3.1.tar.gz": 22273381f61319e46e1da9d7029ca2b3991eee98

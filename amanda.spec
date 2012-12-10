@@ -502,3 +502,77 @@ rm -rf %{buildroot}%{_datadir}/amanda
 
 %attr(-,%{amanda_user},%{amanda_group}) %config(noreplace) %{_localstatedir}/lib/amanda/amandates
 %attr(-,%{amanda_user},%{amanda_group}) %{_localstatedir}/lib/amanda/gnutar-lists/
+
+
+%changelog
+* Sun May 20 2012 Alexander Khrukin <akhrukin@mandriva.org> 3.3.1-1
++ Revision: 799727
+- unpackaged files
+- version update 3.3.1
+
+* Sun Feb 12 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 3.3.0-1
++ Revision: 773456
+- do not use deprecated kerberos5 function (P11)
+- modified example directory handling and dropped amanda-3.1.0-example.patch
+- use bsdtcp authentication by default (dropping amanda-3.1.1-bsd.patch)
+- update buildrequires
+- clean out dependencies a bit
+- use %%rename macro
+- get rid out of commented out stuff giving rpmlint warnings...
+- use _provides_exceptions to filter out perl(Math::BigInt)
+- split out libraries into separate packages
+- add new files
+- fix perl module file names
+- drop deprecated g_thread* functions leading to assertion failures (P10)
+- don't --disable-dependency-tracking
+- fix rhbz#752253 - Using functions in amanda-client which are provided by server
+- fix rhbz#757618 - Use of qw(...) as parentheses is deprecated (P8)
+- drop duplicate changelog
+- cleanup %%install a bit
+- disable --no-undefined linker flag
+- drop conflicting g_queue_free_full() function (P7)
+- new version
+- cleanup
+- mass rebuild of perl extensions against perl 5.14.2
+
+  + Oden Eriksson <oeriksson@mandriva.com>
+    - relink against libpcre.so.1
+
+* Mon Aug 22 2011 Alexander Barakin <abarakin@mandriva.org> 3.2.3-1
++ Revision: 696139
+- Version bump to 3.2.3
+
+  + Oden Eriksson <oeriksson@mandriva.com>
+    - don't force the usage of automake1.7
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild
+
+* Wed Mar 11 2009 Guillaume Rousse <guillomovitch@mandriva.org> 2.5.1-9mdv2009.1
++ Revision: 353961
+- rediff fuzzy patches
+
+* Mon Sep 29 2008 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-8mdv2009.0
++ Revision: 289339
+- fix linkage
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild
+    - rebuild
+    - kill re-definition of %%buildroot on Pixel's request
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+    - adapt to %%_localstatedir now being /var instead of /var/lib (#22312)
+
+  + Olivier Blin <blino@mandriva.org>
+    - restore BuildRoot
+
+* Fri Dec 14 2007 Thierry Vignaud <tv@mandriva.org> 2.5.1-5mdv2008.1
++ Revision: 119836
+- rebuild b/c of missing subpackage on ia32
+
+* Sun Sep 09 2007 Oden Eriksson <oeriksson@mandriva.com> 2.5.1-4mdv2008.0
++ Revision: 83526
+- new devel naming
+
