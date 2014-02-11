@@ -1,0 +1,7 @@
+# filter server specific permits
+addFilter("E: setuid-binary")
+addFilter("E: non-standard-executable-perm")
+addFilter("E: non-standard-dir-perm")
+addFilter("E: non-readable")
+# /var/lib/amanda/amandates 
+addFilter("E: zero-length")

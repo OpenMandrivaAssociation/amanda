@@ -1,2 +1,5 @@
+removed_sources:
+  amanda-3.3.1.tar.gz: 22273381f61319e46e1da9d7029ca2b3991eee98
+  amanda-3.3.3.tar.gz: 18a416e79e6c52fb59da6e87b040f946f9b5f681
 sources:
-  "amanda-3.3.1.tar.gz": 22273381f61319e46e1da9d7029ca2b3991eee98
+  amanda-3.3.5.tar.gz: ec8df3b1d9f61911c682387f736b39696b83e742
