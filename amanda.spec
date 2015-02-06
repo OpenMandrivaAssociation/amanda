@@ -16,7 +16,7 @@
 Summary:	A network-capable tape backup solution
 Name:		amanda
 Version:	3.3.5
-Release:	2
+Release:	3
 License:	BSD
 Group:		Archiving/Backup
 Url:		http://www.amanda.org
