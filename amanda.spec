@@ -19,7 +19,7 @@ Version:	3.3.5
 Release:	3
 License:	BSD
 Group:		Archiving/Backup
-Url:		http://www.amanda.org
+Url:		https://www.amanda.org
 Source0:	http://downloads.sourceforge.net/amanda/amanda-%{version}.tar.gz
 Source1:	amanda.crontab
 Source4:	disklist
