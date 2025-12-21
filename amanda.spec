@@ -31,6 +31,11 @@ Patch2:		amanda-3.1.1-xattrs.patch
 Patch3:		amanda-3.1.1-tcpport.patch
 Patch6:		amanda-3.2.0-config-dir.patch
 Patch11:	amanda-3.3.0-kerberos5-deprecated.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	dump
 BuildRequires:	gnuplot
 BuildRequires:	cups
